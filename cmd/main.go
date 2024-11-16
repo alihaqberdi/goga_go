@@ -37,6 +37,7 @@ func main() {
 	}))
 
 	mw := handlers.MW
+	_ = mw
 	// api
 	{
 		r.GET("/", func(ctx *gin.Context) {
