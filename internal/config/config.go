@@ -17,6 +17,10 @@ var (
 
 	// Chaching
 	CACHING_EXPIRATION_DURATION = 16 * 24 * time.Hour
+
+	// JWT
+	JWT_SIGNING_KEY     = "github.com/alihaqberdi/goga_go"
+	JWT_EXPIRY_DURATION = 10 * 24 * time.Hour
 )
 
 func LoadVarsFromEnv() {
@@ -25,6 +29,9 @@ func LoadVarsFromEnv() {
 	setIfExistsStr(&POSTGRES_URI, "POSTGRES_URI")
 
 	setIfExistsDur(&CACHING_EXPIRATION_DURATION, "CACHING_EXPIRATION_DURATION")
+
+	setIfExistsStr(&JWT_SIGNING_KEY, "JWT_SIGNING_KEY")
+	setIfExistsDur(&JWT_EXPIRY_DURATION, "JWT_EXPIRY_DURATION")
 
 }
 

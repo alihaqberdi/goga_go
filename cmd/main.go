@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/alihaqberdi/goga_go/internal/config"
 	"github.com/alihaqberdi/goga_go/internal/handler"
+	"github.com/alihaqberdi/goga_go/internal/pkg/jwt_manager"
 	"github.com/alihaqberdi/goga_go/internal/pkg/postgres"
 	"github.com/alihaqberdi/goga_go/internal/repo"
 	"github.com/alihaqberdi/goga_go/internal/service"
@@ -26,9 +27,10 @@ func main() {
 		panic(err)
 	}
 
+	jwtManager := jwt_manager.New(config.JWT_SIGNING_KEY, config.JWT_EXPIRY_DURATION)
 	repos := repo.New(db)
 	cache := caching.New()
-	services := service.New(repos, cache)
+	services := service.New(repos, cache, jwtManager)
 	handlers := handler.New(services, cache)
 
 	r := gin.Default()
