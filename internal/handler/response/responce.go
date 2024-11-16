@@ -1,31 +1,30 @@
 package response
 
 import (
-	"github.com/alihaqberdi/goga_go/internal/pkg/status"
 	"github.com/gin-gonic/gin"
 )
 
-func Success(c *gin.Context, res interface{}, code ...status.Code) {
-	c.JSON(getCode(200, code), map[string]interface{}{
+func Success(c *gin.Context, res any, code ...int) {
+	c.JSON(getCode(200, code), map[string]any{
 		"res":    res,
 		"status": true,
 	})
 }
 
-func Fail(c *gin.Context, msg string, code ...status.Code) {
-	c.JSON(getCode(400, code), map[string]interface{}{
+func Fail(c *gin.Context, msg string, code ...int) {
+	c.JSON(getCode(400, code), map[string]any{
 		"status": false,
 		"msg":    msg,
 	})
 }
 
-func FailErr(c *gin.Context, err error, code ...status.Code) {
+func FailErr(c *gin.Context, err error, code ...int) {
 	Fail(c, err.Error(), code...)
 }
 
 // others
 
-func HasErr(c *gin.Context, err error, code ...status.Code) bool {
+func HasErr(c *gin.Context, err error, code ...int) bool {
 
 	if err != nil {
 		FailErr(c, err, code...)
@@ -35,7 +34,7 @@ func HasErr(c *gin.Context, err error, code ...status.Code) bool {
 	return false
 }
 
-func Finish[R any](c *gin.Context, res R, err error, code ...status.Code) {
+func Finish[R any](c *gin.Context, res R, err error, code ...int) {
 
 	if err != nil {
 		FailErr(c, err, code...)
@@ -45,9 +44,9 @@ func Finish[R any](c *gin.Context, res R, err error, code ...status.Code) {
 	Success(c, res, code...)
 }
 
-func getCode(c int, code []status.Code) int {
+func getCode(c int, code []int) int {
 	if len(code) == 1 {
-		return code[0].GetOrDef(c)
+		return code[0]
 	}
 
 	return c
