@@ -1,7 +1,9 @@
 package repo
 
+import "gorm.io/gorm"
+
 type Probs struct {
-	//crud CrudRepo[*models.Prob]
+	DB *gorm.DB
 }
 
 //

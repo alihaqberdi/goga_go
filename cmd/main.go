@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/alihaqberdi/goga_go/internal/config"
 	"github.com/alihaqberdi/goga_go/internal/handler"
+	"github.com/alihaqberdi/goga_go/internal/pkg/postgres"
 	"github.com/alihaqberdi/goga_go/internal/repo"
 	"github.com/alihaqberdi/goga_go/internal/service"
 	"github.com/alihaqberdi/goga_go/internal/service/caching"
@@ -15,9 +16,17 @@ import (
 )
 
 func main() {
-	// TODO database init
+	db, err := postgres.ConnectDB(config.POSTGRES_URI)
+	if err != nil {
+		panic(err)
+	}
 
-	repos := repo.New()
+	err = postgres.AutoMigrate(db)
+	if err != nil {
+		panic(err)
+	}
+
+	repos := repo.New(db)
 	cache := caching.New()
 	services := service.New(repos, cache)
 	handlers := handler.New(services, cache)
