@@ -57,13 +57,6 @@ func main() {
 			probs.GET("/lookup/:problem_id", h.LookupProb)
 		}
 
-		search := v1.Group("/search")
-		{
-			h := handlers.Search
-
-			search.GET("/probs", h.SearchProbs)
-		}
-
 	}
 
 	log.Fatalln(r.Run(":" + config.PORT))

@@ -7,17 +7,13 @@ import (
 )
 
 type Handlers struct {
-	Dev    *Dev
-	MW     *mw.Middleware
-	Probs  *Probs
-	Search *Search
+	MW    *mw.Middleware
+	Probs *Probs
 }
 
 func New(serv *service.Service, _cache *caching.Cache) *Handlers {
 	return &Handlers{
-		&Dev{serv, _cache},
 		mw.New(serv, _cache),
 		&Probs{serv},
-		&Search{serv},
 	}
 }
