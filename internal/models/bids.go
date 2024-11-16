@@ -6,11 +6,12 @@ import (
 )
 
 type Bid struct {
-	Id           int
-	TenderId     int
-	ContractorId int
-	Price        float64
-	DeliveryTime time.Time
-	Comments     string
-	Status       types.BidStatus
+	Id           int     			`gorm:"primaryKey";autoIncrement`
+	TenderId     int	 			`gorm:"not null"`
+	ContractorId int	 			`gorm:"not null"`
+	Price        float64 			`gorm:"not null"`
+	DeliveryTime time.Time 			`gorm:"not null"`
+	Comments     string 			`gorm:"type:text"`
+	Status       types.BidStatus	`gorm:"not null"`
 }
+

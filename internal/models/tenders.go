@@ -6,11 +6,11 @@ import (
 )
 
 type Tender struct {
-	Id          int
-	ClientId    int
-	Title       string
-	Description string
-	Deadline    time.Time
-	Budget      float64
-	Status      types.TenderStatus
+	Id          int					`gorm:"primaryKey";autoIncrement`
+	ClientId    int					`gorm:"not null"`
+	Title       string 				`gorm:"type:varchar(255);not null"`
+	Description string 				`gorm:"type:text"`
+	Deadline    time.Time			`gorm:"not null"`
+	Budget      float64 			`gorm:"not null"`
+	Status      types.TenderStatus 	`gorm:"not null"`
 }
