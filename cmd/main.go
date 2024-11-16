@@ -58,12 +58,12 @@ func main() {
 
 		v1 := r.Group("/api/v1")
 
-		probs := v1.Group("/probs")
+		auth := v1.Group("/auth")
 		{
-			h := handlers.Probs
+			h := handlers.Auth
 
-			probs.POST("/save", h.Save)
-			probs.GET("/lookup/:problem_id", h.LookupProb)
+			auth.POST("/register", h.Register)
+			auth.POST("/login", h.Login)
 		}
 
 	}
