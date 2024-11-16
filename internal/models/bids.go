@@ -9,8 +9,8 @@ import (
 
 type Bid struct {
 	gorm.Model
-	TenderId     int             `gorm:"not null"`
-	ContractorId int             `gorm:"not null"`
+	TenderId     uint            `gorm:"not null"`
+	ContractorId uint            `gorm:"not null"`
 	Price        float64         `gorm:"not null"`
 	DeliveryTime time.Time       `gorm:"not null"`
 	Comments     string          `gorm:"type:text"`
