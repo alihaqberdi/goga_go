@@ -66,7 +66,7 @@ func setIfExistsDur(ptr *time.Duration, key string) bool {
 }
 
 func init() {
-	err := godotenv.Overload(".env")
+	err := godotenv.Load(".env")
 	if err != nil {
 		panic(fmt.Errorf("err in loading ENV: %s", err))
 	}
