@@ -9,10 +9,10 @@ import (
 
 type Bid struct {
 	gorm.Model
-	TenderId     uint            `gorm:"not null" json:"tender_id"`
-	ContractorId uint            `gorm:"not null" json:"contractor_id"`
-	Price        float64         `gorm:"not null" json:"price"`
-	DeliveryTime time.Time       `gorm:"not null" json:"delivery_time"`
-	Comments     string          `gorm:"type:text" json:"comments"`
-	Status       types.BidStatus `gorm:"not null" json:"status"`
+	TenderId     uint            `gorm:"not null"`
+	ContractorId uint            `gorm:"not null"`
+	Price        float64         `gorm:"not null"`
+	DeliveryTime time.Time       `gorm:"not null"`
+	Comments     string          `gorm:"type:text"`
+	Status       types.BidStatus `gorm:"not null"`
 }
