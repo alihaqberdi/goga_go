@@ -6,7 +6,7 @@ import (
 )
 
 type Service struct {
-	Probs *Probs
+	Tenders *tenderService
 	//ApiLogging *ApiLogging
 	//ApiAccess  *ApiAccess
 	//Search     *Search
@@ -14,7 +14,7 @@ type Service struct {
 
 func New(repo_ *repo.Repo, cache *caching.Cache) *Service {
 	return &Service{
-		&Probs{repo_, cache},
+		&tenderService{repo_, cache},
 		//&ApiLogging{repo_, cache},
 		//&ApiAccess{repo_, cache},
 		//&Search{repo_, cache},
