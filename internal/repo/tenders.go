@@ -24,7 +24,7 @@ func (r *Tenders) GetByID(id uint) (*models.Tender, error) {
 	return &tender, nil
 }
 
-func (r *Tenders) GetAll(limit, offset int) ([]models.Tender, error) {
+func (r *Tenders) GetList(limit, offset int) ([]models.Tender, error) {
 	var tenders []models.Tender
 	query := r.db.Limit(limit).Offset(offset)
 
