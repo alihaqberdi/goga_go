@@ -87,7 +87,7 @@ func main() {
 		// Tenders
 		client := r.Group("/api/client", mwClient)
 		{
-			h := handlers.Tender
+			h := handlers.Tenders
 
 			client.POST("/tenders", h.Create)
 			client.GET("/tenders", h.GetListByClient)

@@ -12,12 +12,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Tender struct {
+type Tenders struct {
 	Service *service.Service
 	MW      *mw.Middleware
 }
 
-func (h *Tender) Create(c *gin.Context) {
+func (h *Tenders) Create(c *gin.Context) {
 	data, err := bind[dtos.Tender](c)
 	if err != nil {
 		FailErr(c, app_errors.TenderInvalidInput)
@@ -31,7 +31,7 @@ func (h *Tender) Create(c *gin.Context) {
 	}
 
 	data.ClientId = user.Id
-	res, err := h.Service.Tenders.CreateTender(data)
+	res, err := h.Service.Tenders.Create(data)
 
 	if HasErr(c, err) {
 		return
@@ -41,7 +41,7 @@ func (h *Tender) Create(c *gin.Context) {
 
 }
 
-func (h *Tender) Update(c *gin.Context) {
+func (h *Tenders) Update(c *gin.Context) {
 	fmt.Println(`
 c.Param("id")`, c.Param("id"))
 
@@ -64,7 +64,7 @@ c.Param("id")`, c.Param("id"))
 
 	data.ID = uint(id)
 	data.ClientId = user.Id
-	_, err = h.Service.Tenders.UpdateTender(data)
+	_, err = h.Service.Tenders.Update(data)
 
 	if HasErr(c, err) {
 		return
@@ -75,7 +75,7 @@ c.Param("id")`, c.Param("id"))
 	}, 200)
 }
 
-func (h *Tender) Delete(c *gin.Context) {
+func (h *Tenders) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if HasErr(c, err) {
 		return
@@ -95,7 +95,7 @@ func (h *Tender) Delete(c *gin.Context) {
 	Success(c, gin.H{"message": "Tender deleted successfully"}, 200)
 }
 
-func (h *Tender) GetListByClient(c *gin.Context) {
+func (h *Tenders) GetListByClient(c *gin.Context) {
 	data, err := bind[dtos.Tenders](c)
 	if HasErr(c, err) {
 		return
@@ -108,7 +108,7 @@ func (h *Tender) GetListByClient(c *gin.Context) {
 	}
 
 	data.ClientID = user.Id
-	res, err := h.Service.Tenders.GetListTenders(data)
+	res, err := h.Service.Tenders.GetList(data)
 	if HasErr(c, err) {
 		return
 	}
@@ -116,7 +116,7 @@ func (h *Tender) GetListByClient(c *gin.Context) {
 	Success(c, res, 200)
 }
 
-func (h *Tender) GetListTendersByUser(c *gin.Context) {
+func (h *Tenders) GetListTendersByUser(c *gin.Context) {
 	userID, err := strconv.Atoi(c.Query("client_id"))
 	if HasErr(c, err) {
 		return

@@ -12,15 +12,15 @@ import (
 	"github.com/alihaqberdi/goga_go/internal/service/caching"
 )
 
-type tenderService struct {
+type Tenders struct {
 	Repo  *repo.Repo
 	Cache *caching.Cache
 }
 
-func (s *tenderService) CreateTender(tender *dtos.Tender) (*dtos.Tender, error) {
+func (s *Tenders) Create(tender *dtos.Tender) (*dtos.Tender, error) {
 	tender.Status = types.TenderStatusOpen
 
-	if err := s.ValidateTender(tender); err != nil {
+	if err := s.validateTender(tender); err != nil {
 		return nil, err
 	}
 
@@ -44,7 +44,7 @@ func (s *tenderService) CreateTender(tender *dtos.Tender) (*dtos.Tender, error) 
 	return tenderDTO, nil
 }
 
-func (s *tenderService) UpdateTender(data *dtos.Tender) (*dtos.Tender, error) {
+func (s *Tenders) Update(data *dtos.Tender) (*dtos.Tender, error) {
 	model, err := s.Repo.Tenders.GetByID(data.ID)
 	if err != nil {
 		return nil, app_errors.TenderNotFound
@@ -73,7 +73,7 @@ func (s *tenderService) UpdateTender(data *dtos.Tender) (*dtos.Tender, error) {
 
 	}
 
-	err = s.ValidateTender(data)
+	err = s.validateTender(data)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func (s *tenderService) UpdateTender(data *dtos.Tender) (*dtos.Tender, error) {
 	return nil, err
 }
 
-func (s *tenderService) Delete(id, clientID uint) error {
+func (s *Tenders) Delete(id, clientID uint) error {
 	tender, err := s.Repo.Tenders.GetByID(id)
 	if err != nil || tender.ClientId != clientID {
 		return app_errors.TenderNotFoundOrAccessDenied
@@ -98,7 +98,7 @@ func (s *tenderService) Delete(id, clientID uint) error {
 	return nil
 }
 
-func (s *tenderService) GetListTenders(data *dtos.Tenders) ([]dtos.Tender, error) {
+func (s *Tenders) GetList(data *dtos.Tenders) ([]dtos.Tender, error) {
 	if data.Limit == 0 {
 		data.Limit = 10
 	}
@@ -124,7 +124,7 @@ func (s *tenderService) GetListTenders(data *dtos.Tenders) ([]dtos.Tender, error
 	return tenderDTOs, nil
 }
 
-func (s *tenderService) ValidateTender(tender *dtos.Tender) error {
+func (s *Tenders) validateTender(tender *dtos.Tender) error {
 	if tender.Budget <= 0 {
 		return app_errors.TenderInvalidData
 	}
@@ -141,7 +141,7 @@ func (s *tenderService) ValidateTender(tender *dtos.Tender) error {
 	return nil
 }
 
-func (s *tenderService) GetListTendersByUser(userID, limit, offset int) ([]dtos.Tender, error) {
+func (s *Tenders) GetListTendersByUser(userID, limit, offset int) ([]dtos.Tender, error) {
 	tenders, err := s.Repo.Tenders.GetListByUser(userID, limit, offset)
 	if err != nil {
 		return nil, err
