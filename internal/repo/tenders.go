@@ -11,9 +11,9 @@ type Tenders struct {
 
 func (r *Tenders) Create(tender *models.Tender) (models.Tender, error) {
 	if err := r.db.Create(tender).Error; err != nil {
-		return err
+		return models.Tender{}, err
 	}
-	return nil
+	return *tender, nil
 }
 
 func (r *Tenders) GetByID(id uint) (*models.Tender, error) {

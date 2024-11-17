@@ -31,7 +31,6 @@ func (s *tenderService) CreateTender(tender *dtos.Tender) (dtos.Tender, error) {
 		return dtos.Tender{}, err
 	}
 
-	// Convert the created model back to DTO
 	createdTenderDTO := dtos.Tender{
 		ID:          createdTenderModel.ID,
 		ClientId:    createdTenderModel.ClientId,
@@ -42,7 +41,6 @@ func (s *tenderService) CreateTender(tender *dtos.Tender) (dtos.Tender, error) {
 		Status:      createdTenderModel.Status,
 	}
 
-	// Return the created DTO
 	return createdTenderDTO, nil
 }
 
@@ -58,7 +56,12 @@ func (s *tenderService) UpdateTender(tender *dtos.Tender) error {
 }
 
 func (s *tenderService) GetListTenders(limit, offset int) (*dtos.Tender, error) {
-	return s.Repo.Tenders.GetList(limit, offset)
+	tenders, err := s.Repo.Tenders.GetList(limit, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	var tenderDTOs = []dtos.Tender
 }
 
 func (s *tenderService) ValidateTender(tender *dtos.Tender) error {
