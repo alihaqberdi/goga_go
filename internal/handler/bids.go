@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/alihaqberdi/goga_go/internal/dtos"
@@ -27,6 +28,8 @@ type Bids struct {
 // @Success 200 {object} dtos.BidList
 // @Router /api/contractor/tenders/{tender_id}/bid [post]
 func (h *Bids) Create(c *gin.Context) {
+	tenderIdStr := c.Param("tender_id")
+	tenderId, err := strconv.ParseUint(tenderIdStr, 10, 32)
 	user, ok := h.MW.GetUser(c)
 	if !ok {
 		FailErr(c, app_errors.InternalServerError)
@@ -34,9 +37,12 @@ func (h *Bids) Create(c *gin.Context) {
 	}
 	data, err := bind[dtos.BidCreate](c)
 	data.ContractorID = user.Id
+	data.Status = "pending"
+	data.TenderID = uint(tenderId)
 	if HasErr(c, err) {
 		return
 	}
+	fmt.Println(data)
 	res, err := h.Service.Bids.CreateBid(data)
 	if HasErr(c, err) {
 		return
