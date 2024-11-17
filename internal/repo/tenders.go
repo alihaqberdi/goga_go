@@ -1,6 +1,8 @@
 package repo
 
 import (
+	"errors"
+
 	"github.com/alihaqberdi/goga_go/internal/models"
 	"gorm.io/gorm"
 )
@@ -34,12 +36,22 @@ func (r *Tenders) GetList(limit, offset int) ([]models.Tender, error) {
 	return tenders, nil
 }
 
-func (r *Tenders) Update(tender *models.Tender) error {
-	return r.db.Save(tender).Error
+func (r *Tenders) Update(userID int, tender *models.Tender) error {
+	var existingTender models.Tender
+	if err := r.db.Where("id = ? AND client_id = ?", tender.ID, userID).First(&existingTender).Error; err != nil {
+		return errors.New("tender not found or you do not have permission to update it")
+	}
+
+	return r.db.Model(&existingTender).Updates(tender).Error
 }
 
-func (r *Tenders) Delete(id uint) error {
-	return r.db.Delete(&models.Tender{}, id).Error
+func (r *Tenders) Delete(userID, tenderID int) error {
+	var tender models.Tender
+	if err := r.db.Where("id = ? AND client_id = ?", tenderID, userID).First(&tender).Error; err != nil {
+		return errors.New("tender not found or you do not have permission to delete it")
+	}
+
+	return r.db.Delete(&tender).Error
 }
 
 func (r *Tenders) GetListByUser(userID int, limit, offset int) ([]models.Tender, error) {
