@@ -55,14 +55,14 @@ func (s *tenderService) UpdateTender(tender *dtos.Tender) error {
 	return err
 }
 
-func (s *tenderService) GetListTenders(limit, offset int) (*dtos.Tender, error) {
-	tenders, err := s.Repo.Tenders.GetList(limit, offset)
-	if err != nil {
-		return nil, err
-	}
+// func (s *tenderService) GetListTenders(limit, offset int) (*dtos.Tender, error) {
+// 	tenders, err := s.Repo.Tenders.GetList(limit, offset)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	var tenderDTOs = []dtos.Tender
-}
+// 	var tenderDTOs = []dtos.Tender
+// }
 
 func (s *tenderService) ValidateTender(tender *dtos.Tender) error {
 	// Ensure the budget is greater than 0
