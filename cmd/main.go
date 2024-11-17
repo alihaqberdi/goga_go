@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/alihaqberdi/goga_go/internal/models/types"
 	"log"
 	"math/rand/v2"
 	"net/http"
 	"time"
+
+	"github.com/alihaqberdi/goga_go/internal/models/types"
 
 	_ "github.com/alihaqberdi/goga_go/docs"
 
@@ -48,8 +49,6 @@ func main() {
 
 	r := gin.Default()
 
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"*"},
@@ -61,7 +60,7 @@ func main() {
 		},
 		MaxAge: 12 * time.Hour,
 	}))
-
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	mwClient := handlers.MW.AuthByRoles(types.UserRoleClient)
 	mwContractor := handlers.MW.AuthByRoles(types.UserRoleContractor)
 	_, _ = mwContractor, mwClient
@@ -86,6 +85,7 @@ func main() {
 			h := handlers.Bids
 			bids.POST("/contractor/tenders/:tender_id/bid", h.CreateBid)
 			bids.GET("/client/tenders/:tender_id/bids", h.GetList)
+			bids.POST("/client/tenders/:tender_id/award:id", h.AwardBid)
 		}
 
 	}
