@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/alihaqberdi/goga_go/internal/models/types"
 	"log"
 	"math/rand/v2"
 	"net/http"
 	"time"
+
+	"github.com/alihaqberdi/goga_go/internal/models/types"
 
 	_ "github.com/alihaqberdi/goga_go/docs"
 
@@ -48,8 +49,6 @@ func main() {
 
 	r := gin.Default()
 
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"*"},
@@ -61,7 +60,7 @@ func main() {
 		},
 		MaxAge: 12 * time.Hour,
 	}))
-
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	mwClient := handlers.MW.AuthByRoles(types.UserRoleClient)
 	mwContractor := handlers.MW.AuthByRoles(types.UserRoleContractor)
 	_, _ = mwContractor, mwClient
@@ -81,7 +80,6 @@ func main() {
 			r.POST("/register", h.Register)
 			r.POST("/login", h.Login)
 		}
-
 		client := r.Group("/api/client")
 		{
 			h := handlers.Tender
@@ -89,12 +87,13 @@ func main() {
 			client.POST("/tenders", h.CreateTender)
 
 		}
-
-		bids := r.Group("/bids")
+		bids_client := r.Group("/api/client")
+		bids_contractor := r.Group("/api/contractor")
 		{
 			h := handlers.Bids
-			bids.POST("/", h.CreateBid)
-			bids.GET("/:tender_id", h.GetList)
+			bids_contractor.POST("/tenders/:tender_id/bid", h.CreateBid)
+			bids_client.GET("/tenders/:tender_id/bids", h.GetList)
+			bids_client.POST("/tenders/:tender_id/award:id", h.AwardBid)
 		}
 
 	}

@@ -15,7 +15,43 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/bids/{tender_id}": {
+        "/api/client/tenders/{tender_id}/award/{id}": {
+            "post": {
+                "description": "Award a bid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bids"
+                ],
+                "summary": "Award a bid",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Tender ID",
+                        "name": "tender_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Bid ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/client/tenders/{tender_id}/bids": {
             "get": {
                 "description": "Get list of bids",
                 "consumes": [
@@ -45,7 +81,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/contractor/tenders/{tender_id}/bid": {
             "post": {
                 "description": "Create a new bid",
                 "consumes": [
@@ -72,7 +110,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.BidsCreate"
+                            "$ref": "#/definitions/dtos.BidCreate"
                         }
                     }
                 ],
@@ -167,7 +205,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dtos.BidList": {
+        "dtos.BidCreate": {
             "type": "object",
             "properties": {
                 "comments": {
@@ -181,9 +219,6 @@ const docTemplate = `{
                 "delivery_time": {
                     "type": "string",
                     "example": "12"
-                },
-                "id": {
-                    "type": "integer"
                 },
                 "price": {
                     "type": "number",
@@ -203,7 +238,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dtos.BidsCreate": {
+        "dtos.BidList": {
             "type": "object",
             "properties": {
                 "comments": {
@@ -217,6 +252,9 @@ const docTemplate = `{
                 "delivery_time": {
                     "type": "string",
                     "example": "12"
+                },
+                "id": {
+                    "type": "integer"
                 },
                 "price": {
                     "type": "number",

@@ -6,6 +6,7 @@ import (
 	"github.com/alihaqberdi/goga_go/internal/dtos"
 	"github.com/alihaqberdi/goga_go/internal/models"
 	"github.com/alihaqberdi/goga_go/internal/models/types"
+	"github.com/alihaqberdi/goga_go/internal/pkg/app_errors"
 	"github.com/alihaqberdi/goga_go/internal/repo"
 	"github.com/alihaqberdi/goga_go/internal/service/caching"
 )
@@ -30,9 +31,29 @@ func (s *bidsService) CreateBid(bid *dtos.BidCreate) (*models.Bid, error) {
 	})
 
 }
+func (s *bidsService) AwardBid(tenderID, id uint) error {
+	tender, err := s.Repo.Tenders.GetByID(tenderID)
+	bid, err := s.Repo.Bids.GetByID(id)
+	if err != nil {
+		return app_errors.TenderNotFound
+	}
+	if bid.Status != types.BidStatusPending {
+		return app_errors.BidNotPending
+	}
+	if tender.Status != types.TenderStatusClosed {
+		return app_errors.TenderNotClosed
+	}
+
+	return s.Repo.Bids.AwardBid(id)
+}
 func (s *bidsService) GetList(tenderID uint) ([]models.Bid, error) {
+	_, err := s.Repo.Tenders.GetByID(tenderID)
+	if err != nil {
+		return nil, app_errors.TenderNotFound
+	}
 	return s.Repo.Bids.GetList(tenderID)
 }
+
 func (s *bidsService) ValidateBid(bid *dtos.BidCreate) error {
 	if bid.Price <= 0 {
 		return errors.New("amount must be greater than zero")

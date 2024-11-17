@@ -26,7 +26,14 @@ func (r *Bids) GetList(tenderId uint) ([]models.Bid, error) {
 
 	return bids, nil
 }
+func (r *Bids) GetByID(id uint) (*models.Bid, error) {
+	var bid models.Bid
+	if err := r.DB.First(&bid, id).Error; err != nil {
+		return nil, err
+	}
 
+	return &bid, nil
+}
 func (r *Bids) AwardBid(id uint) error {
 	if err := r.DB.Model(&models.Bid{}).Where("id = ?", id).Update("status", types.BidStatusAwarded).Error; err != nil {
 		return err
