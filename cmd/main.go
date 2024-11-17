@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/alihaqberdi/goga_go/internal/models/types"
 	"log"
 	"math/rand/v2"
 	"net/http"
@@ -43,7 +44,7 @@ func main() {
 	repos := repo.New(db)
 	cache := caching.New()
 	services := service.New(repos, cache, jwtManager)
-	handlers := handler.New(services, cache)
+	handlers := handler.New(services, cache, jwtManager)
 
 	r := gin.Default()
 
@@ -61,8 +62,9 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	mw := handlers.MW
-	_ = mw
+	mwClient := handlers.MW.AuthByRoles(types.UserRoleClient)
+	mwContractor := handlers.MW.AuthByRoles(types.UserRoleContractor)
+	_, _ = mwContractor, mwClient
 	// api
 	{
 		r.GET("/", func(ctx *gin.Context) {
