@@ -1,21 +1,33 @@
 package main
 
 import (
+	"log"
+	"math/rand/v2"
+	"net/http"
+	"time"
+
+	_ "github.com/alihaqberdi/goga_go/docs"
+
 	"github.com/alihaqberdi/goga_go/internal/config"
 	"github.com/alihaqberdi/goga_go/internal/handler"
 	"github.com/alihaqberdi/goga_go/internal/pkg/postgres"
 	"github.com/alihaqberdi/goga_go/internal/repo"
 	"github.com/alihaqberdi/goga_go/internal/service"
 	"github.com/alihaqberdi/goga_go/internal/service/caching"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"log"
-	"math/rand/v2"
-	"net/http"
-	"time"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title Go API Example
+// @version 1.0
+// @description API documentation for the Go application
+// @host localhost:8080
+// @BasePath /api/v1
 func main() {
+
 	db, err := postgres.ConnectDB(config.POSTGRES_URI)
 	if err != nil {
 		panic(err)
@@ -32,6 +44,8 @@ func main() {
 	handlers := handler.New(services, cache)
 
 	r := gin.Default()
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},

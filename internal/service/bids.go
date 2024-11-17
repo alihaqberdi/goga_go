@@ -19,6 +19,7 @@ func (s *bidsService) CreateBid(bid *models.Bid) error {
 	if err != nil {
 		return err
 	}
+	return s.Repo.Bids.Create(bid)
 }
 func (s *bidsService) ValidateBid(bid *models.Bid) error {
 	if bid.Price <= 0 {
