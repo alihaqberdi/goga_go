@@ -150,6 +150,25 @@ paths:
       summary: Get list of bids
       tags:
       - Bids
+  /api/contractor/bids/{tender_id}/bid/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a bid
+      parameters:
+      - description: Bid ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Delete a bid
+      tags:
+      - Bids
   /api/contractor/tenders/{tender_id}/bid:
     post:
       consumes:
@@ -221,4 +240,25 @@ paths:
       summary: Register a new user
       tags:
       - auth
+  /users/{id}/bids:
+    get:
+      consumes:
+      - application/json
+      description: Get user bids
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.BidList'
+      summary: Get user bids
+      tags:
+      - Bids
 swagger: "2.0"
