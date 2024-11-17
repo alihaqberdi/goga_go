@@ -1,22 +1,25 @@
 
-reload: git_reload
+create-network:
+	@docker network create my-network || true
 
-git_reload:
-	git pull
-	$(MAKE) docker_reload
 
-docker_reload:
-	go build cmd/main.go
-	docker stop my-app
-	docker rm my-app
-	docker rmi my-app
+run_db: create-network
+	@docker run -d --name postgres-container \
+		--network my-network \
+		-e POSTGRES_USER=postgres \
+		-e POSTGRES_PASSWORD=password \
+		-e POSTGRES_DB=postgres \
+		-p 5432:5432 \
+		postgres
+
+run:
 	docker build -t my-app .
 	docker run -d \
       --name my-app \
       --restart=always \
       --network my-network \
       -v /my-docker-data/my-uploads:/app/uploads \
-      -p 8080:8080 \
+      -p 8888:8888 \
       my-app
 
 

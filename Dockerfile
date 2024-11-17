@@ -6,6 +6,6 @@ RUN go mod tidy
 RUN go build cmd/main.go
 
 #COPY --from=builder /app/main .
-EXPOSE 8080
+EXPOSE 8888
 CMD ["./main"]
 
