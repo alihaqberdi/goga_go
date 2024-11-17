@@ -79,7 +79,8 @@ func main() {
 			r.POST("/register", h.Register)
 			r.POST("/login", h.Login)
 		}
-		bids := v1.Group("/bids")
+
+		bids := r.Group("/bids")
 		{
 			h := handlers.Bids
 			bids.POST("/", h.CreateBid)
