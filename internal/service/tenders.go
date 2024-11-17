@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"github.com/alihaqberdi/goga_go/internal/pkg/app_errors"
 	"time"
 
 	"github.com/alihaqberdi/goga_go/internal/dtos"
@@ -16,21 +17,21 @@ type tenderService struct {
 	Cache *caching.Cache
 }
 
-func (s *tenderService) CreateTender(tender *dtos.Tender) (dtos.Tender, error) {
+func (s *tenderService) CreateTender(tender *dtos.Tender) (*dtos.Tender, error) {
 	tender.Status = types.TenderStatusOpen
 
 	if err := s.ValidateTender(tender); err != nil {
-		return dtos.Tender{}, err
+		return nil, err
 	}
 
 	tenderModel := mapping.ConvertTenderDTOToModel(tender)
 
 	createdTenderModel, err := s.Repo.Tenders.Create(tenderModel)
 	if err != nil {
-		return dtos.Tender{}, err
+		return nil, err
 	}
 
-	createdTenderDTO := dtos.Tender{
+	tenderDTO := &dtos.Tender{
 		ID:          createdTenderModel.ID,
 		ClientId:    createdTenderModel.ClientId,
 		Title:       createdTenderModel.Title,
@@ -40,7 +41,7 @@ func (s *tenderService) CreateTender(tender *dtos.Tender) (dtos.Tender, error) {
 		Status:      createdTenderModel.Status,
 	}
 
-	return createdTenderDTO, nil
+	return tenderDTO, nil
 }
 
 func (s *tenderService) UpdateTender(userID int, tender *dtos.Tender) (*dtos.Tender, error) {
@@ -88,15 +89,16 @@ func (s *tenderService) GetListTenders(limit, offset int) ([]dtos.Tender, error)
 
 func (s *tenderService) ValidateTender(tender *dtos.Tender) error {
 	if tender.Budget <= 0 {
-		return errors.New("budget must be greater than zero")
+		return app_errors.TenderInvalidData
 	}
 
 	if tender.Deadline.Before(time.Now()) {
 		return errors.New("deadline must be in the future")
 	}
 
-	if tender.Status != types.TenderStatusOpen && tender.Status != types.TenderStatusClosed {
-		return errors.New("invalid status, must be either 'open' or 'closed'")
+	// Ensure that the status is valid (you can expand this based on your business rules)
+	if !tender.Status.Valid() {
+		return errors.New("invalid status")
 	}
 
 	return nil

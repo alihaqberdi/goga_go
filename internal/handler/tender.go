@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"github.com/alihaqberdi/goga_go/internal/handler/mw"
+	"github.com/alihaqberdi/goga_go/internal/pkg/app_errors"
 	"strconv"
 
 	"github.com/alihaqberdi/goga_go/internal/dtos"
@@ -11,14 +13,23 @@ import (
 
 type Tender struct {
 	Service *service.Service
+	MW      *mw.Middleware
 }
 
-func (h *Tender) CreateTender(c *gin.Context) {
+func (h *Tender) Create(c *gin.Context) {
 	data, err := bind[dtos.Tender](c)
-	if HasErr(c, err) {
+	if err != nil {
+		FailErr(c, app_errors.TenderInvalidInput)
 		return
 	}
 
+	user, ok := h.MW.GetUser(c)
+	if !ok {
+		FailErr(c, app_errors.InternalServerError)
+		return
+	}
+
+	data.ClientId = user.Id
 	res, err := h.Service.Tenders.CreateTender(data)
 
 	if HasErr(c, err) {
