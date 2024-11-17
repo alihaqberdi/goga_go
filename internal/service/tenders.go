@@ -99,3 +99,27 @@ func (s *tenderService) ValidateTender(tender *dtos.Tender) error {
 
 	return nil
 }
+
+func (s *tenderService) GetListTendersByUser(userID, limit, offset int) ([]dtos.Tender, error) {
+	// Call the repository to get the list of tenders for the user
+	tenders, err := s.Repo.Tenders.GetListByUser(userID, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	// Map the models to DTOs
+	tenderDTOs := make([]dtos.Tender, len(tenders))
+	for i, model := range tenders {
+		tenderDTOs[i] = dtos.Tender{
+			ID:          model.ID,
+			ClientId:    model.ClientId,
+			Title:       model.Title,
+			Description: model.Description,
+			Deadline:    model.Deadline,
+			Budget:      model.Budget,
+			Status:      model.Status,
+		}
+	}
+
+	return tenderDTOs, nil
+}
