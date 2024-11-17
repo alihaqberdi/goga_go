@@ -18,7 +18,6 @@ run:
       --name my-app \
       --restart=always \
       --network my-network \
-      -v /my-docker-data/my-uploads:/app/uploads \
       -p 8888:8888 \
       my-app
 
