@@ -22,7 +22,7 @@ type Bids struct {
 // @Param tender_id path int true "Tender ID"
 // @Param bid body dtos.BidCreate true "Bid object"
 // @Success 200 {object} dtos.BidList
-// @Router /api/v1/bids/{tender_id} [post]
+// @Router /api/contractor/tenders/{tender_id}/bid [post]
 func (h *Bids) CreateBid(c *gin.Context) {
 	data, err := bind[dtos.BidCreate](c)
 	if HasErr(c, err) {
@@ -32,7 +32,7 @@ func (h *Bids) CreateBid(c *gin.Context) {
 	if HasErr(c, err) {
 		return
 	}
-	Success(c, res)
+	Success(c, res, 201)
 }
 
 // GetList godoc
@@ -43,7 +43,7 @@ func (h *Bids) CreateBid(c *gin.Context) {
 // @Produce json
 // @Param tender_id path int true "Tender ID"
 // @Success 200 {object} dtos.BidList
-// @Router /api/v1/bids/{tender_id} [get]
+// @Router /api/client/tenders/{tender_id}/bids [get]
 func (h *Bids) GetList(c *gin.Context) {
 	tenderIdStr := c.Param("tender_id")
 	tenderId, err := strconv.ParseUint(tenderIdStr, 10, 32)
@@ -55,4 +55,32 @@ func (h *Bids) GetList(c *gin.Context) {
 		return
 	}
 	Success(c, res)
+}
+
+// AwardBid godoc
+// @Summary Award a bid
+// @Description Award a bid
+// @Tags Bids
+// @Accept json
+// @Produce json
+// @Param tender_id path int true "Tender ID"
+// @Param id path int true "Bid ID"
+// @Success 200
+// @Router /api/client/tenders/{tender_id}/award/{id} [post]
+func (h *Bids) AwardBid(c *gin.Context) {
+	tenderIdStr := c.Param("tender_id")
+	tenderId, err := strconv.ParseUint(tenderIdStr, 10, 32)
+	if HasErr(c, err) {
+		return
+	}
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if HasErr(c, err) {
+		return
+	}
+	err = h.Service.Bids.AwardBid(uint(tenderId), uint(id))
+	if HasErr(c, err) {
+		return
+	}
+	Success(c, nil)
 }
