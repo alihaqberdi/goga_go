@@ -16,20 +16,34 @@ type bidsService struct {
 	Cache *caching.Cache
 }
 
-func (s *bidsService) CreateBid(bid *dtos.BidCreate) (*models.Bid, error) {
+func (s *bidsService) CreateBid(bid *dtos.BidCreate) (*dtos.BidList, error) {
 	err := s.ValidateBid(bid)
 	if err != nil {
 		return nil, err
 	}
-	return s.Repo.Bids.Create(&models.Bid{
+	data := models.Bid{
 		TenderId:     bid.TenderID,
-		Price:        bid.Price,
-		Status:       bid.Status,
 		ContractorId: bid.ContractorID,
+		Price:        bid.Price,
 		DeliveryTime: bid.DeliveryTime,
 		Comments:     bid.Comments,
-	})
-
+		Status:       bid.Status,
+	}
+	res, err := s.Repo.Bids.Create(&data)
+	if err != nil {
+		return nil, err
+	}
+	return &dtos.BidList{
+		BidsBase: dtos.BidsBase{
+			TenderID:     res.TenderId,
+			ContractorID: res.ContractorId,
+			Price:        res.Price,
+			DeliveryTime: res.DeliveryTime,
+			Comments:     res.Comments,
+			Status:       res.Status,
+		},
+		ID: res.ID,
+	}, nil
 }
 func (s *bidsService) Delete(id uint) error {
 	_, err := s.Repo.Bids.GetByID(id)
