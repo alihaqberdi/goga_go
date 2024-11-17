@@ -51,7 +51,7 @@ func (s *Bids) Create(bid *dtos.BidCreate) (*dtos.BidList, error) {
 func (s *Bids) Delete(id uint) error {
 	_, err := s.Repo.Bids.GetByID(id)
 	if err != nil {
-		return app_errors.BidNotFound
+		return app_errors.BidNotFoundOrAccessDenied
 	}
 	return s.Repo.Bids.Delete(id)
 }
