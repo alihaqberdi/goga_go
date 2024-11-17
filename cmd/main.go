@@ -96,20 +96,14 @@ func main() {
 		}
 
 		// Bids
-		bids_contractor := r.Group("/api/contractor")
+		bids_contractor := r.Group("/api/contractor", mwContractor)
 		{
 			h := handlers.Bids
 			bids_contractor.POST("/tenders/:tender_id/bid", h.Create)
-			bids_contractor.DELETE("/tenders/:tender_id/bid/:id", h.Delete)
-			bids_client.GET("/tenders/:tender_id/bids", h.GetList)
-			bids_client.POST("/tenders/:tender_id/award:id", h.AwardBid)
+			bids_contractor.DELETE("/bids/:id", h.Delete)
+			client.GET("/api/client/tenders/:tender_id/bids", h.GetList)
+			client.POST("/api/client/tenders/:tender_id/award:id", h.AwardBid)
 		}
-		users := r.Group("/users", mwClient)
-		{
-			h := handlers.Bids
-			users.GET("/:id/bids", h.UserBids)
-		}
-
 	}
 
 	log.Fatalln(r.Run(":" + config.PORT))

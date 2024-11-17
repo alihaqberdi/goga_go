@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/alihaqberdi/goga_go/internal/dtos"
@@ -117,7 +118,8 @@ func (h *Bids) Delete(c *gin.Context) {
 // @Success 200 {object} dtos.BidList
 // @Router /users/{id}/bids [get]
 func (h *Bids) UserBids(c *gin.Context) {
-	userID := c.GetInt("user_id")
+	fmt.Println(c)
+	userID := 1
 	res, err := h.Service.Bids.UserBids(uint(userID))
 	if HasErr(c, err) {
 		return

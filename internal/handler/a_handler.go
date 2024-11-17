@@ -14,7 +14,7 @@ type Handlers struct {
 
 func New(serv *service.Service, _cache *caching.Cache, mw *mw.Middleware) *Handlers {
 	return &Handlers{
-		&Tender{serv},
+		&Tender{serv, mw},
 		&Auth{serv},
 		&Bids{serv},
 	}
