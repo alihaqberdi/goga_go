@@ -1,6 +1,8 @@
 package response
 
 import (
+	"errors"
+	"github.com/alihaqberdi/goga_go/internal/pkg/app_errors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,6 +22,13 @@ func Fail(c *gin.Context, msg string, code ...int) {
 }
 
 func FailErr(c *gin.Context, err error, code ...int) {
+
+	var appErr *app_errors.AppError
+	if errors.As(err, &appErr) {
+		Fail(c, appErr.Message, appErr.Status)
+		return
+	}
+
 	Fail(c, err.Error(), code...)
 }
 

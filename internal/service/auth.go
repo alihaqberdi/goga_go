@@ -1,9 +1,9 @@
 package service
 
 import (
-	"errors"
 	"github.com/alihaqberdi/goga_go/internal/dtos"
 	"github.com/alihaqberdi/goga_go/internal/models"
+	"github.com/alihaqberdi/goga_go/internal/pkg/app_errors"
 	"github.com/alihaqberdi/goga_go/internal/pkg/jwt_manager"
 	"github.com/alihaqberdi/goga_go/internal/repo"
 	"github.com/alihaqberdi/goga_go/internal/service/caching"
@@ -27,13 +27,17 @@ func (s *Auth) Register(data *dtos.Register) (*dtos.AuthRes, error) {
 }
 
 func (s *Auth) Login(data *dtos.Login) (*dtos.AuthRes, error) {
+	if data.Username == "" || data.Password == "" {
+		return nil, app_errors.AuthLoginDataRequired
+	}
+
 	user, err := s.Repo.Users.GetByUsername(data.Username)
 	if err != nil {
-		return nil, err
+		return nil, app_errors.AuthUserNotFound
 	}
 
 	if !s.verifyPassword(user.PasswordHash, data.Password) {
-		return nil, errors.New("invalid password")
+		return nil, app_errors.AuthInvalidPassword
 	}
 
 	return s.authRes(user)
@@ -41,23 +45,27 @@ func (s *Auth) Login(data *dtos.Login) (*dtos.AuthRes, error) {
 
 func (s *Auth) register(data *dtos.Register) (*models.User, error) {
 	if data.Email == "" || data.Username == "" {
-		return nil, errors.New("username or email cannot be empty")
+		return nil, app_errors.AuthEmptyUsernameOrEmail
 	}
 
 	if data.Password == "" {
-		return nil, errors.New("password cannot be empty")
+		return nil, app_errors.AuthEmptyPassword
+	}
+
+	if !data.Role.Valid() {
+		return nil, app_errors.AuthInvalidRole
 	}
 
 	if !s.validateEmail(data.Email) {
-		return nil, errors.New("invalid email format")
+		return nil, app_errors.AuthInvalidEmail
 	}
 
 	if s.Repo.Users.ExistsByEmail(data.Email) {
-		return nil, errors.New("email already exists")
+		return nil, app_errors.AuthDuplicateEmail
 	}
 
 	if s.Repo.Users.ExistsByUsername(data.Username) {
-		return nil, errors.New("username already exists")
+		return nil, app_errors.AuthDuplicateUsername
 	}
 
 	passwordHash, err := s.hashPassword(data.Password)
