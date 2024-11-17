@@ -15,6 +15,77 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/bids/{tender_id}": {
+            "get": {
+                "description": "Get list of bids",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bids"
+                ],
+                "summary": "Get list of bids",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Tender ID",
+                        "name": "tender_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.BidList"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new bid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bids"
+                ],
+                "summary": "Create a new bid",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Tender ID",
+                        "name": "tender_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Bid object",
+                        "name": "bid",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.BidsCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.BidList"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "Login",
@@ -96,6 +167,75 @@ const docTemplate = `{
                 }
             }
         },
+        "dtos.BidList": {
+            "type": "object",
+            "properties": {
+                "comments": {
+                    "type": "string",
+                    "example": "This is a comment"
+                },
+                "contractor_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "delivery_time": {
+                    "type": "string",
+                    "example": "12"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number",
+                    "example": 100
+                },
+                "status": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/types.BidStatus"
+                        }
+                    ],
+                    "example": "pending"
+                },
+                "tender_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "dtos.BidsCreate": {
+            "type": "object",
+            "properties": {
+                "comments": {
+                    "type": "string",
+                    "example": "This is a comment"
+                },
+                "contractor_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "delivery_time": {
+                    "type": "string",
+                    "example": "12"
+                },
+                "price": {
+                    "type": "number",
+                    "example": 100
+                },
+                "status": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/types.BidStatus"
+                        }
+                    ],
+                    "example": "pending"
+                },
+                "tender_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "dtos.Login": {
             "type": "object",
             "properties": {
@@ -140,6 +280,17 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "types.BidStatus": {
+            "type": "string",
+            "enum": [
+                "pending",
+                "awarded"
+            ],
+            "x-enum-varnames": [
+                "BidStatusPending",
+                "BidStatusAwarded"
+            ]
         },
         "types.UserRole": {
             "type": "string",

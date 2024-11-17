@@ -10,6 +10,7 @@ type Handlers struct {
 	MW    *mw.Middleware
 	Probs *Probs
 	Auth  *Auth
+	Bids  *Bids
 }
 
 func New(serv *service.Service, _cache *caching.Cache) *Handlers {
@@ -17,5 +18,6 @@ func New(serv *service.Service, _cache *caching.Cache) *Handlers {
 		mw.New(serv, _cache),
 		&Probs{serv},
 		&Auth{serv},
+		&Bids{serv},
 	}
 }
