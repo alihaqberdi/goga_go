@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/alihaqberdi/goga_go/internal/handler/mw"
 	"github.com/alihaqberdi/goga_go/internal/pkg/app_errors"
 	"strconv"
@@ -40,23 +41,38 @@ func (h *Tender) Create(c *gin.Context) {
 
 }
 
-func (h *Tender) UpdateTender(c *gin.Context) {
-	userID, err := strconv.Atoi(c.Query("client_id"))
+func (h *Tender) Update(c *gin.Context) {
+	fmt.Println(`
+c.Param("id")`, c.Param("id"))
+
+	id, err := strconv.Atoi(c.Param("id"))
 	if HasErr(c, err) {
 		return
 	}
 
 	data, err := bind[dtos.Tender](c)
+	if err != nil {
+		FailErr(c, app_errors.TenderInvalidInput)
+		return
+	}
+
+	user, ok := h.MW.GetUser(c)
+	if !ok {
+		FailErr(c, app_errors.InternalServerError)
+		return
+	}
+
+	data.ID = uint(id)
+	data.ClientId = user.Id
+	_, err = h.Service.Tenders.UpdateTender(data)
+
 	if HasErr(c, err) {
 		return
 	}
 
-	res, err := h.Service.Tenders.UpdateTender(userID, data)
-	if HasErr(c, err) {
-		return
-	}
-
-	Success(c, res, 201)
+	Success(c, gin.H{
+		"message": "Tender status updated",
+	}, 200)
 }
 
 func (h *Tender) DeleteTender(c *gin.Context) {

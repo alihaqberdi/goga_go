@@ -91,16 +91,16 @@ func main() {
 
 			client.POST("/tenders", h.Create)
 			client.GET("/tenders", h.GetListTenders)
-			client.PUT("/tenders", h.UpdateTender)
+			client.PUT("/tenders/:id", h.Update)
 			client.GET("/tenders/:id", h.GetListTendersByUser)
 		}
 
 		// Bids
-		bids_contractor := r.Group("/api/contractor", mwContractor)
+		contractor := r.Group("/api/contractor", mwContractor)
 		{
 			h := handlers.Bids
-			bids_contractor.POST("/tenders/:tender_id/bid", h.Create)
-			bids_contractor.DELETE("/bids/:id", h.Delete)
+			contractor.POST("/tenders/:tender_id/bid", h.Create)
+			contractor.DELETE("/bids/:id", h.Delete)
 			client.GET("/api/client/tenders/:tender_id/bids", h.GetList)
 			client.POST("/api/client/tenders/:tender_id/award:id", h.AwardBid)
 		}

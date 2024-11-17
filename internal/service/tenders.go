@@ -44,13 +44,42 @@ func (s *tenderService) CreateTender(tender *dtos.Tender) (*dtos.Tender, error) 
 	return tenderDTO, nil
 }
 
-func (s *tenderService) UpdateTender(userID int, tender *dtos.Tender) (*dtos.Tender, error) {
-	if err := s.ValidateTender(tender); err != nil {
+func (s *tenderService) UpdateTender(data *dtos.Tender) (*dtos.Tender, error) {
+	model, err := s.Repo.Tenders.GetByID(data.ID)
+	if err != nil {
+		return nil, app_errors.TenderNotFound
+	}
+
+	if model.ClientId != data.ClientId {
 		return nil, err
 	}
 
-	tenderModel := mapping.ConvertTenderDTOToModel(tender)
-	err := s.Repo.Tenders.Update(userID, tenderModel)
+	{
+		if data.Title == "" {
+			data.Title = model.Title
+		}
+		if data.Description == "" {
+			data.Description = model.Description
+		}
+		if data.Deadline.IsZero() {
+			data.Deadline = model.Deadline
+		}
+		if data.Budget == 0 {
+			data.Budget = model.Budget
+		}
+		if data.Status == "" {
+			data.Status = model.Status
+		}
+
+	}
+
+	err = s.ValidateTender(data)
+	if err != nil {
+		return nil, err
+	}
+
+	model = mapping.ConvertTenderDTOToModel(data)
+	err = s.Repo.Tenders.Update(model)
 
 	return nil, err
 }
@@ -98,7 +127,7 @@ func (s *tenderService) ValidateTender(tender *dtos.Tender) error {
 
 	// Ensure that the status is valid (you can expand this based on your business rules)
 	if !tender.Status.Valid() {
-		return errors.New("invalid status")
+		return app_errors.TenderInvalidStatus
 	}
 
 	return nil
