@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"github.com/alihaqberdi/goga_go/internal/pkg/app_errors"
 	"time"
 
 	"github.com/alihaqberdi/goga_go/internal/dtos"
@@ -16,24 +17,21 @@ type tenderService struct {
 	Cache *caching.Cache
 }
 
-func (s *tenderService) CreateTender(tender *dtos.Tender) (dtos.Tender, error) {
+func (s *tenderService) CreateTender(tender *dtos.Tender) (*dtos.Tender, error) {
 	tender.Status = types.TenderStatusOpen
 
-	// Validate the DTO
 	if err := s.ValidateTender(tender); err != nil {
-		return dtos.Tender{}, err
+		return nil, err
 	}
 
-	// Convert DTO to Model
 	tenderModel := mapping.ConvertTenderDTOToModel(tender)
 
-	// Call the repository to create the tender
 	createdTenderModel, err := s.Repo.Tenders.Create(tenderModel)
 	if err != nil {
-		return dtos.Tender{}, err
+		return nil, err
 	}
 
-	createdTenderDTO := dtos.Tender{
+	tenderDTO := &dtos.Tender{
 		ID:          createdTenderModel.ID,
 		ClientId:    createdTenderModel.ClientId,
 		Title:       createdTenderModel.Title,
@@ -43,18 +41,28 @@ func (s *tenderService) CreateTender(tender *dtos.Tender) (dtos.Tender, error) {
 		Status:      createdTenderModel.Status,
 	}
 
-	return createdTenderDTO, nil
+	return tenderDTO, nil
 }
 
-func (s *tenderService) UpdateTender(tender *dtos.Tender) (*dtos.Tender, error) {
+func (s *tenderService) UpdateTender(userID int, tender *dtos.Tender) (*dtos.Tender, error) {
 	if err := s.ValidateTender(tender); err != nil {
 		return nil, err
 	}
 
 	tenderModel := mapping.ConvertTenderDTOToModel(tender)
-	err := s.Repo.Tenders.Update(tenderModel)
+	err := s.Repo.Tenders.Update(userID, tenderModel)
 
 	return nil, err
+}
+
+func (s *tenderService) DeleteTender(userID, tenderID int) error {
+	// Call the repository to delete the tender
+	err := s.Repo.Tenders.Delete(userID, tenderID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *tenderService) GetListTenders(limit, offset int) ([]dtos.Tender, error) {
@@ -80,34 +88,28 @@ func (s *tenderService) GetListTenders(limit, offset int) ([]dtos.Tender, error)
 }
 
 func (s *tenderService) ValidateTender(tender *dtos.Tender) error {
-	// Ensure the budget is greater than 0
 	if tender.Budget <= 0 {
-		return errors.New("budget must be greater than zero")
+		return app_errors.TenderInvalidData
 	}
 
-	// Ensure the deadline is in the future
 	if tender.Deadline.Before(time.Now()) {
 		return errors.New("deadline must be in the future")
 	}
 
 	// Ensure that the status is valid (you can expand this based on your business rules)
-	if tender.Status != types.TenderStatusOpen && tender.Status != types.TenderStatusClosed {
-		return errors.New("invalid status, must be either 'open' or 'closed'")
+	if !tender.Status.Valid() {
+		return errors.New("invalid status")
 	}
-
-	// You can add more validation rules as needed
 
 	return nil
 }
 
 func (s *tenderService) GetListTendersByUser(userID, limit, offset int) ([]dtos.Tender, error) {
-	// Call the repository to get the list of tenders for the user
 	tenders, err := s.Repo.Tenders.GetListByUser(userID, limit, offset)
 	if err != nil {
 		return nil, err
 	}
 
-	// Map the models to DTOs
 	tenderDTOs := make([]dtos.Tender, len(tenders))
 	for i, model := range tenders {
 		tenderDTOs[i] = dtos.Tender{

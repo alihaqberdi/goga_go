@@ -6,7 +6,7 @@ import (
 
 func bind[D any](c *gin.Context) (*D, error) {
 	data := new(D)
-	err := c.Bind(data)
+	err := c.ShouldBind(data)
 
 	return data, err
 }
