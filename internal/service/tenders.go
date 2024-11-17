@@ -84,9 +84,13 @@ func (s *tenderService) UpdateTender(data *dtos.Tender) (*dtos.Tender, error) {
 	return nil, err
 }
 
-func (s *tenderService) DeleteTender(userID, tenderID int) error {
-	// Call the repository to delete the tender
-	err := s.Repo.Tenders.Delete(userID, tenderID)
+func (s *tenderService) Delete(id, clientID uint) error {
+	tender, err := s.Repo.Tenders.GetByID(id)
+	if err != nil || tender.ClientId != clientID {
+		return app_errors.TenderNotFoundOrAccessDenied
+	}
+
+	err = s.Repo.Tenders.Delete(id)
 	if err != nil {
 		return err
 	}
@@ -94,10 +98,14 @@ func (s *tenderService) DeleteTender(userID, tenderID int) error {
 	return nil
 }
 
-func (s *tenderService) GetListTenders(limit, offset int) ([]dtos.Tender, error) {
-	tenders, err := s.Repo.Tenders.GetList(limit, offset)
+func (s *tenderService) GetListTenders(data *dtos.Tenders) ([]dtos.Tender, error) {
+	if data.Limit == 0 {
+		data.Limit = 10
+	}
+
+	tenders, err := s.Repo.Tenders.GetList(data)
 	if err != nil {
-		return []dtos.Tender{}, err
+		return nil, err
 	}
 
 	tenderDTOs := make([]dtos.Tender, len(tenders))

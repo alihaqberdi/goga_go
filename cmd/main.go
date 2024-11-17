@@ -90,8 +90,9 @@ func main() {
 			h := handlers.Tender
 
 			client.POST("/tenders", h.Create)
-			client.GET("/tenders", h.GetListTenders)
+			client.GET("/tenders", h.GetListByClient)
 			client.PUT("/tenders/:id", h.Update)
+			client.DELETE("/tenders/:id", h.Delete)
 			client.GET("/tenders/:id", h.GetListTendersByUser)
 		}
 

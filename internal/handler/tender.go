@@ -75,18 +75,19 @@ c.Param("id")`, c.Param("id"))
 	}, 200)
 }
 
-func (h *Tender) DeleteTender(c *gin.Context) {
-	userID, err := strconv.Atoi(c.Query("client_id"))
+func (h *Tender) Delete(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
 	if HasErr(c, err) {
 		return
 	}
 
-	tenderID, err := strconv.Atoi(c.Query("tender_id"))
-	if HasErr(c, err) {
+	user, ok := h.MW.GetUser(c)
+	if !ok {
+		FailErr(c, app_errors.InternalServerError)
 		return
 	}
 
-	err = h.Service.Tenders.DeleteTender(userID, tenderID)
+	err = h.Service.Tenders.Delete(uint(id), user.Id)
 	if HasErr(c, err) {
 		return
 	}
@@ -94,23 +95,25 @@ func (h *Tender) DeleteTender(c *gin.Context) {
 	Success(c, gin.H{"message": "Tender deleted successfully"}, 200)
 }
 
-func (h *Tender) GetListTenders(c *gin.Context) {
-	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
+func (h *Tender) GetListByClient(c *gin.Context) {
+	data, err := bind[dtos.Tenders](c)
 	if HasErr(c, err) {
 		return
 	}
 
-	offset, err := strconv.Atoi(c.DefaultQuery("offset", "0"))
+	user, ok := h.MW.GetUser(c)
+	if !ok {
+		FailErr(c, app_errors.InternalServerError)
+		return
+	}
+
+	data.ClientID = user.Id
+	res, err := h.Service.Tenders.GetListTenders(data)
 	if HasErr(c, err) {
 		return
 	}
 
-	res, err := h.Service.Tenders.Repo.Tenders.GetList(limit, offset)
-	if HasErr(c, err) {
-		return
-	}
-
-	Success(c, res, 201)
+	Success(c, res, 200)
 }
 
 func (h *Tender) GetListTendersByUser(c *gin.Context) {
