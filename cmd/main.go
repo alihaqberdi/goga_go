@@ -87,12 +87,13 @@ func main() {
 			client.POST("/tenders", h.CreateTender)
 
 		}
-		bids := r.Group("/api")
+		bids_client := r.Group("/api/client")
+		bids_contractor := r.Group("/api/contractor")
 		{
 			h := handlers.Bids
-			bids.POST("/contractor/tenders/:tender_id/bid", h.CreateBid)
-			bids.GET("/client/tenders/:tender_id/bids", h.GetList)
-			bids.POST("/client/tenders/:tender_id/award:id", h.AwardBid)
+			bids_contractor.POST("/tenders/:tender_id/bid", h.CreateBid)
+			bids_client.GET("/tenders/:tender_id/bids", h.GetList)
+			bids_client.POST("/tenders/:tender_id/award:id", h.AwardBid)
 		}
 
 	}
