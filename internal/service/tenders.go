@@ -17,6 +17,8 @@ type tenderService struct {
 }
 
 func (s *tenderService) CreateTender(tender *dtos.Tender) (dtos.Tender, error) {
+	tender.Status = types.TenderStatusOpen
+
 	// Validate the DTO
 	if err := s.ValidateTender(tender); err != nil {
 		return dtos.Tender{}, err
