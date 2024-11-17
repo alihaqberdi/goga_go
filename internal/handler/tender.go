@@ -14,7 +14,7 @@ type Tender struct {
 	Service *service.Service
 }
 
-func (h *Tender) CreateTender(c *gin.Context) {
+func (h *Tender) Create(c *gin.Context) {
 	data, err := bind[dtos.Tender](c)
 	if err != nil {
 		FailErr(c, app_errors.TenderInvalidInput)
