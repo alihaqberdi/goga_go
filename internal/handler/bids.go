@@ -126,7 +126,13 @@ func (h *Bids) AwardBid(c *gin.Context) {
 		return
 	}
 
-	err = h.Service.Bids.AwardBid(uint(tenderId), uint(id))
+	user, ok := h.MW.GetUser(c)
+	if !ok {
+		FailErr(c, app_errors.InternalServerError)
+		return
+	}
+
+	err = h.Service.Bids.AwardBid(uint(tenderId), uint(id), user.Id)
 	if HasErr(c, err) {
 		return
 	}
@@ -153,7 +159,13 @@ func (h *Bids) Delete(c *gin.Context) {
 		return
 	}
 
-	err = h.Service.Bids.Delete(uint(id))
+	user, ok := h.MW.GetUser(c)
+	if !ok {
+		FailErr(c, app_errors.InternalServerError)
+		return
+	}
+
+	err = h.Service.Bids.Delete(uint(id), user.Id)
 	if HasErr(c, err) {
 		return
 	}
