@@ -14,7 +14,7 @@ var (
 	PORT = "8080"
 
 	//	Databases
-	POSTGRES_URI         = "postgres://postgres:voidpostgres@localhost:5432/postgres?sslmode=disable"
+	POSTGRES_URI         = "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
 	POSTGRES_DROP_TABELS = true
 
 	// Chaching
