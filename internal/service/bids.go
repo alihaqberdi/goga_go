@@ -15,7 +15,7 @@ type bidsService struct {
 	Cache *caching.Cache
 }
 
-func (s *bidsService) CreateBid(bid *dtos.BidsCreate) (*models.Bid, error) {
+func (s *bidsService) CreateBid(bid *dtos.BidCreate) (*models.Bid, error) {
 	err := s.ValidateBid(bid)
 	if err != nil {
 		return nil, err
@@ -33,7 +33,7 @@ func (s *bidsService) CreateBid(bid *dtos.BidsCreate) (*models.Bid, error) {
 func (s *bidsService) GetList(tenderID uint) ([]models.Bid, error) {
 	return s.Repo.Bids.GetList(tenderID)
 }
-func (s *bidsService) ValidateBid(bid *dtos.BidsCreate) error {
+func (s *bidsService) ValidateBid(bid *dtos.BidCreate) error {
 	if bid.Price <= 0 {
 		return errors.New("amount must be greater than zero")
 	}

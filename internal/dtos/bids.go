@@ -15,7 +15,7 @@ type BidsBase struct {
 	Status       types.BidStatus `json:"status" example:"pending"`
 }
 
-type BidsCreate struct {
+type BidCreate struct {
 	BidsBase
 }
 

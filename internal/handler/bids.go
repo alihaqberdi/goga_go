@@ -20,11 +20,11 @@ type Bids struct {
 // @Accept json
 // @Produce json
 // @Param tender_id path int true "Tender ID"
-// @Param bid body dtos.BidsCreate true "Bid object"
+// @Param bid body dtos.BidCreate true "Bid object"
 // @Success 200 {object} dtos.BidList
 // @Router /api/v1/bids/{tender_id} [post]
 func (h *Bids) CreateBid(c *gin.Context) {
-	data, err := bind[dtos.BidsCreate](c)
+	data, err := bind[dtos.BidCreate](c)
 	if HasErr(c, err) {
 		return
 	}
