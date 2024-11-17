@@ -8,9 +8,9 @@ import (
 
 type Tender struct {
 	ID          uint               `json:"id"`
-	ClientId    uint               `json:"username"`
-	Title       string             `json:"role"`
-	Description string             `json:"email"`
+	ClientId    uint               `json:"client_id"`
+	Title       string             `json:"title"`
+	Description string             `json:"description"`
 	Deadline    time.Time          `json:"deadline"`
 	Budget      float64            `json:"budget"`
 	Status      types.TenderStatus `json:"status"`

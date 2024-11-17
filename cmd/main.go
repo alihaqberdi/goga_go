@@ -82,6 +82,14 @@ func main() {
 			r.POST("/login", h.Login)
 		}
 
+		client := r.Group("/api/client")
+		{
+			h := handlers.Tender
+
+			client.POST("/tenders", h.CreateTender)
+
+		}
+
 		bids := r.Group("/bids")
 		{
 			h := handlers.Bids
