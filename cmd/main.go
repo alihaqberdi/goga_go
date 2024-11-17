@@ -72,14 +72,12 @@ func main() {
 			})
 		})
 
-		v1 := r.Group("/api/v1")
-
-		auth := v1.Group("/auth")
+		// Auth
 		{
 			h := handlers.Auth
 
-			auth.POST("/register", h.Register)
-			auth.POST("/login", h.Login)
+			r.POST("/register", h.Register)
+			r.POST("/login", h.Login)
 		}
 
 	}

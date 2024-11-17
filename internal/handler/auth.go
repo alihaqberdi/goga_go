@@ -48,4 +48,17 @@ func (h *Auth) Register(c *gin.Context) {
 // @Router /auth/login [post]
 func (h *Auth) Login(c *gin.Context) {
 
+	data, err := bind[dtos.Login](c)
+	if HasErr(c, err) {
+		return
+	}
+
+	res, err := h.Service.Auth.Login(data)
+
+	if HasErr(c, err, 401) {
+		return
+	}
+
+	Success(c, res, 200)
+
 }
