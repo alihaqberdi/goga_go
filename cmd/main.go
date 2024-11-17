@@ -79,12 +79,11 @@ func main() {
 			r.POST("/register", h.Register)
 			r.POST("/login", h.Login)
 		}
-
-		bids := r.Group("/bids")
+		bids := r.Group("/api")
 		{
 			h := handlers.Bids
-			bids.POST("/", h.CreateBid)
-			bids.GET("/:tender_id", h.GetList)
+			bids.POST("/contractor/tenders/:tender_id/bid", h.CreateBid)
+			bids.GET("/client/tenders/:tender_id/bids", h.GetList)
 		}
 
 	}
