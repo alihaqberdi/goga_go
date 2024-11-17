@@ -31,6 +31,16 @@ func (s *bidsService) CreateBid(bid *dtos.BidCreate) (*models.Bid, error) {
 	})
 
 }
+func (s *bidsService) Delete(id uint) error {
+	_, err := s.Repo.Bids.GetByID(id)
+	if err != nil {
+		return app_errors.BidNotFound
+	}
+	return s.Repo.Bids.Delete(id)
+}
+func (s *bidsService) UserBids(userID uint) ([]models.Bid, error) {
+	return s.Repo.Bids.UserBids(userID)
+}
 func (s *bidsService) AwardBid(tenderID, id uint) error {
 	tender, err := s.Repo.Tenders.GetByID(tenderID)
 	bid, err := s.Repo.Bids.GetByID(id)

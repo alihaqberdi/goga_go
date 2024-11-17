@@ -41,3 +41,20 @@ func (r *Bids) AwardBid(id uint) error {
 
 	return nil
 }
+
+func (r *Bids) Delete(id uint) error {
+	if err := r.DB.Delete(&models.Bid{}, id).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *Bids) UserBids(userID uint) ([]models.Bid, error) {
+	var bids []models.Bid
+	if err := r.DB.Where("contractor_id = ?", userID).Find(&bids).Error; err != nil {
+		return nil, err
+	}
+
+	return bids, nil
+}

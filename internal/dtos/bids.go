@@ -26,3 +26,9 @@ type BidList struct {
 type BidAward struct {
 	ID uint `json:"id"`
 }
+type BidDelete struct {
+	ID uint `json:"id"`
+}
+type UserBids struct {
+	UserID uint `json:"user_id"`
+}

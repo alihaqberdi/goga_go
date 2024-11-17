@@ -83,6 +83,35 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/contractor/bids/{tender_id}/bid/{id}": {
+            "delete": {
+                "description": "Delete a bid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bids"
+                ],
+                "summary": "Delete a bid",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Bid ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/contractor/tenders/{tender_id}/bid": {
             "post": {
                 "description": "Create a new bid",
@@ -187,6 +216,38 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/dtos.AuthRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/bids": {
+            "get": {
+                "description": "Get user bids",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bids"
+                ],
+                "summary": "Get user bids",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.BidList"
                         }
                     }
                 }
