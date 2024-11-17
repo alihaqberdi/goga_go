@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/alihaqberdi/goga_go/internal/handler/mw"
 	"log"
 	"math/rand/v2"
 	"net/http"
 	"time"
+
+	"github.com/alihaqberdi/goga_go/internal/handler/mw"
 
 	"github.com/alihaqberdi/goga_go/internal/models/types"
 
@@ -93,9 +94,15 @@ func main() {
 		bids_contractor := r.Group("/api/contractor")
 		{
 			h := handlers.Bids
-			bids_contractor.POST("/tenders/:tender_id/bid", h.CreateBid)
+			bids_contractor.POST("/tenders/:tender_id/bid", h.Create)
+			bids_contractor.DELETE("/tenders/:tender_id/bid/:id", h.Delete)
 			bids_client.GET("/tenders/:tender_id/bids", h.GetList)
 			bids_client.POST("/tenders/:tender_id/award:id", h.AwardBid)
+		}
+		users := r.Group("/users", mwClient)
+		{
+			h := handlers.Bids
+			users.GET("/:id/bids", h.UserBids)
 		}
 
 	}
