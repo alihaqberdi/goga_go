@@ -2,11 +2,12 @@ package config
 
 import (
 	"fmt"
-	"github.com/go-shafaq/timep"
-	"github.com/joho/godotenv"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/go-shafaq/timep"
+	"github.com/joho/godotenv"
 )
 
 var (
