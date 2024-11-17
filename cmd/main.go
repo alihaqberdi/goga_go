@@ -64,9 +64,9 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	mwClient := mw.AuthByRoles(types.UserRoleClient)
 	mwContractor := mw.AuthByRoles(types.UserRoleContractor)
-	_, _ = mwContractor, mwClient
 	// api
 	{
 		r.GET("/", func(ctx *gin.Context) {
