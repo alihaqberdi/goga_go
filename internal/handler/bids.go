@@ -152,11 +152,14 @@ func (h *Bids) Delete(c *gin.Context) {
 	if HasErr(c, err) {
 		return
 	}
+
 	err = h.Service.Bids.Delete(uint(id))
 	if HasErr(c, err) {
 		return
 	}
-	Success(c, nil)
+
+	Success(c, gin.H{"message": "Bid deleted successfully"})
+
 }
 
 // UserBids godoc
