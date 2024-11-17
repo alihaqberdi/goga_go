@@ -101,9 +101,11 @@ func main() {
 		{
 			h := handlers.Bids
 			contractor.POST("/tenders/:tender_id/bid", h.Create)
+			contractor.GET("/bids", h.GetListByContractor)
 			contractor.DELETE("/bids/:id", h.Delete)
-			client.GET("/api/client/tenders/:tender_id/bids", h.GetList)
-			client.POST("/api/client/tenders/:tender_id/award:id", h.AwardBid)
+
+			client.GET("/tenders/:id/bids", h.GetList)
+			client.POST("/tenders/:id/award:id", h.AwardBid)
 		}
 	}
 

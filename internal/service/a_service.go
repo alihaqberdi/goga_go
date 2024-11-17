@@ -9,13 +9,13 @@ import (
 type Service struct {
 	Tenders *Tenders
 	Auth    *Auth
-	Bids    *bidsService
+	Bids    *Bids
 }
 
 func New(repo_ *repo.Repo, cache *caching.Cache, jwtManager *jwt_manager.JwtManager) *Service {
 	return &Service{
 		&Tenders{repo_, cache},
 		&Auth{repo_, cache, jwtManager},
-		&bidsService{repo_, cache},
+		&Bids{repo_, cache},
 	}
 }

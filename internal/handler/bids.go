@@ -28,26 +28,31 @@ type Bids struct {
 // @Success 200 {object} dtos.BidList
 // @Router /api/contractor/tenders/{tender_id}/bid [post]
 func (h *Bids) Create(c *gin.Context) {
-	tenderIdStr := c.Param("tender_id")
-	tenderId, err := strconv.ParseUint(tenderIdStr, 10, 32)
+	tenderId, err := strconv.ParseUint(c.Param("tender_id"), 10, 32)
+
 	user, ok := h.MW.GetUser(c)
 	if !ok {
 		FailErr(c, app_errors.InternalServerError)
 		return
 	}
+
 	data, err := bind[dtos.BidCreate](c)
+	if HasErr(c, err) {
+		return
+	}
+
 	data.ContractorID = user.Id
 	data.Status = "pending"
 	data.TenderID = uint(tenderId)
-	if HasErr(c, err) {
-		return
-	}
+
 	fmt.Println(data)
-	res, err := h.Service.Bids.CreateBid(data)
+	res, err := h.Service.Bids.Create(data)
 	if HasErr(c, err) {
 		return
 	}
+
 	Success(c, res, 201)
+
 }
 
 // GetList godoc
@@ -60,16 +65,43 @@ func (h *Bids) Create(c *gin.Context) {
 // @Success 200 {object} dtos.BidList
 // @Router /api/client/tenders/{tender_id}/bids [get]
 func (h *Bids) GetList(c *gin.Context) {
-	tenderIdStr := c.Param("tender_id")
+	tenderIdStr := c.Param("id")
 	tenderId, err := strconv.ParseUint(tenderIdStr, 10, 32)
 	if HasErr(c, err) {
 		return
 	}
-	res, err := h.Service.Bids.GetList(uint(tenderId))
+
+	_ = tenderId
+	res, err := h.Service.Bids.GetList(&dtos.Bids{
+		TenderID: uint(tenderId),
+	})
 	if HasErr(c, err) {
 		return
 	}
+
 	Success(c, res)
+
+}
+
+func (h *Bids) GetListByContractor(c *gin.Context) {
+	data, err := bind[dtos.Bids](c)
+	if HasErr(c, err) {
+		return
+	}
+
+	user, ok := h.MW.GetUser(c)
+	if !ok {
+		FailErr(c, app_errors.InternalServerError)
+		return
+	}
+
+	data.ContractorID = user.Id
+	res, err := h.Service.Bids.GetList(data)
+	if HasErr(c, err) {
+		return
+	}
+
+	Success(c, res, 200)
 }
 
 // AwardBid godoc
