@@ -62,16 +62,22 @@ func (s *Bids) UserBids(userID uint) ([]models.Bid, error) {
 
 func (s *Bids) AwardBid(tenderID, id uint) error {
 	tender, err := s.Repo.Tenders.GetByID(tenderID)
+	_ = tender
+	if err != nil {
+		return app_errors.TenderNotFoundOrAccessDenied
+	}
+
 	bid, err := s.Repo.Bids.GetByID(id)
 	if err != nil {
-		return app_errors.TenderNotFound
+		return app_errors.BidNotFound
 	}
+
 	if bid.Status != types.BidStatusPending {
 		return app_errors.BidNotPending
 	}
-	if tender.Status != types.TenderStatusClosed {
-		return app_errors.TenderNotClosed
-	}
+	//if tender.Status != types.TenderStatusClosed {
+	//	return app_errors.TenderNotClosed
+	//}
 
 	return s.Repo.Bids.AwardBid(id)
 }

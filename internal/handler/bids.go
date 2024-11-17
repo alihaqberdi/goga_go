@@ -115,21 +115,26 @@ func (h *Bids) GetListByContractor(c *gin.Context) {
 // @Success 200
 // @Router /api/client/tenders/{tender_id}/award/{id} [post]
 func (h *Bids) AwardBid(c *gin.Context) {
-	tenderIdStr := c.Param("tender_id")
+	tenderIdStr := c.Param("id")
 	tenderId, err := strconv.ParseUint(tenderIdStr, 10, 32)
 	if HasErr(c, err) {
 		return
 	}
-	idStr := c.Param("id")
+	idStr := c.Param("bid_id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if HasErr(c, err) {
 		return
 	}
+
 	err = h.Service.Bids.AwardBid(uint(tenderId), uint(id))
 	if HasErr(c, err) {
 		return
 	}
-	Success(c, nil)
+
+	Success(c, gin.H{
+		"message": "Bid awarded successfully",
+	})
+
 }
 
 // Delete godoc
