@@ -46,25 +46,38 @@ func (s *tenderService) CreateTender(tender *dtos.Tender) (dtos.Tender, error) {
 	return createdTenderDTO, nil
 }
 
-func (s *tenderService) UpdateTender(tender *dtos.Tender) error {
+func (s *tenderService) UpdateTender(tender *dtos.Tender) (*dtos.Tender, error) {
 	if err := s.ValidateTender(tender); err != nil {
-		return err
+		return nil, err
 	}
 
 	tenderModel := mapping.ConvertTenderDTOToModel(tender)
 	err := s.Repo.Tenders.Update(tenderModel)
 
-	return err
+	return nil, err
 }
 
-// func (s *tenderService) GetListTenders(limit, offset int) (*dtos.Tender, error) {
-// 	tenders, err := s.Repo.Tenders.GetList(limit, offset)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+func (s *tenderService) GetListTenders(limit, offset int) ([]dtos.Tender, error) {
+	tenders, err := s.Repo.Tenders.GetList(limit, offset)
+	if err != nil {
+		return []dtos.Tender{}, err
+	}
 
-// 	var tenderDTOs = []dtos.Tender
-// }
+	tenderDTOs := make([]dtos.Tender, len(tenders))
+	for i, model := range tenders {
+		tenderDTOs[i] = dtos.Tender{
+			ID:          model.ID,
+			ClientId:    model.ClientId,
+			Title:       model.Title,
+			Description: model.Description,
+			Deadline:    model.Deadline,
+			Budget:      model.Budget,
+			Status:      model.Status,
+		}
+	}
+
+	return tenderDTOs, nil
+}
 
 func (s *tenderService) ValidateTender(tender *dtos.Tender) error {
 	// Ensure the budget is greater than 0
