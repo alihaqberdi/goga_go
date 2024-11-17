@@ -64,9 +64,9 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	mwClient := mw.AuthByRoles(types.UserRoleClient)
 	mwContractor := mw.AuthByRoles(types.UserRoleContractor)
-	_, _ = mwContractor, mwClient
 	// api
 	{
 		r.GET("/", func(ctx *gin.Context) {
@@ -87,11 +87,12 @@ func main() {
 		// Tenders
 		client := r.Group("/api/client", mwClient)
 		{
-			h := handlers.Tender
+			h := handlers.Tenders
 
 			client.POST("/tenders", h.Create)
-			client.GET("/tenders", h.GetListTenders)
+			client.GET("/tenders", h.GetListByClient)
 			client.PUT("/tenders/:id", h.Update)
+			client.DELETE("/tenders/:id", h.Delete)
 			client.GET("/tenders/:id", h.GetListTendersByUser)
 		}
 

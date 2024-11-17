@@ -23,7 +23,7 @@ type Bids struct {
 // @Tags Bids
 // @Accept json
 // @Produce json
-// @Param tender_id path int true "Tender ID"
+// @Param tender_id path int true "Tenders ID"
 // @Param bid body dtos.BidCreate true "Bid object"
 // @Success 200 {object} dtos.BidList
 // @Router /api/contractor/tenders/{tender_id}/bid [post]
@@ -56,7 +56,7 @@ func (h *Bids) Create(c *gin.Context) {
 // @Tags Bids
 // @Accept json
 // @Produce json
-// @Param tender_id path int true "Tender ID"
+// @Param tender_id path int true "Tenders ID"
 // @Success 200 {object} dtos.BidList
 // @Router /api/client/tenders/{tender_id}/bids [get]
 func (h *Bids) GetList(c *gin.Context) {
@@ -78,7 +78,7 @@ func (h *Bids) GetList(c *gin.Context) {
 // @Tags Bids
 // @Accept json
 // @Produce json
-// @Param tender_id path int true "Tender ID"
+// @Param tender_id path int true "Tenders ID"
 // @Param id path int true "Bid ID"
 // @Success 200
 // @Router /api/client/tenders/{tender_id}/award/{id} [post]
