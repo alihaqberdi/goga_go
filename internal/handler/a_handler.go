@@ -7,15 +7,15 @@ import (
 )
 
 type Handlers struct {
-	MW    *mw.Middleware
-	Probs *Probs
-	Auth  *Auth
+	MW     *mw.Middleware
+	Tender *Tender
+	Auth   *Auth
 }
 
 func New(serv *service.Service, _cache *caching.Cache) *Handlers {
 	return &Handlers{
 		mw.New(serv, _cache),
-		&Probs{serv},
+		&Tender{serv},
 		&Auth{serv},
 	}
 }

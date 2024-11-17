@@ -4,8 +4,9 @@ import (
 	"errors"
 	"time"
 
-	"github.com/alihaqberdi/goga_go/internal/models"
+	"github.com/alihaqberdi/goga_go/internal/dtos"
 	"github.com/alihaqberdi/goga_go/internal/models/types"
+	"github.com/alihaqberdi/goga_go/internal/pkg/mapping"
 	"github.com/alihaqberdi/goga_go/internal/repo"
 	"github.com/alihaqberdi/goga_go/internal/service/caching"
 )
@@ -15,27 +16,52 @@ type tenderService struct {
 	Cache *caching.Cache
 }
 
-func (s *tenderService) CreateTender(tender *models.Tender) (uint, error) {
+func (s *tenderService) CreateTender(tender *dtos.Tender) (dtos.Tender, error) {
+	// Validate the DTO
 	if err := s.ValidateTender(tender); err != nil {
-		return 0, err
+		return dtos.Tender{}, err
 	}
 
-	return s.Repo.Tenders.Create(tender)
+	// Convert DTO to Model
+	tenderModel := mapping.ConvertTenderDTOToModel(tender)
+
+	// Call the repository to create the tender
+	createdTenderModel, err := s.Repo.Tenders.Create(tenderModel)
+	if err != nil {
+		return dtos.Tender{}, err
+	}
+
+	// Convert the created model back to DTO
+	createdTenderDTO := dtos.Tender{
+		ID:          createdTenderModel.ID,
+		ClientId:    createdTenderModel.ClientId,
+		Title:       createdTenderModel.Title,
+		Description: createdTenderModel.Description,
+		Deadline:    createdTenderModel.Deadline,
+		Budget:      createdTenderModel.Budget,
+		Status:      createdTenderModel.Status,
+	}
+
+	// Return the created DTO
+	return createdTenderDTO, nil
 }
 
-func (s *tenderService) UpdateTender(tender *models.Tender) error {
+func (s *tenderService) UpdateTender(tender *dtos.Tender) error {
 	if err := s.ValidateTender(tender); err != nil {
 		return err
 	}
 
-	return s.Repo.Tenders.Update(tender)
+	tenderModel := mapping.ConvertTenderDTOToModel(tender)
+	err := s.Repo.Tenders.Update(tenderModel)
+
+	return err
 }
 
-func (s *tenderService) GetListTenders(limit, offset int) ([]models.Tender, error) {
+func (s *tenderService) GetListTenders(limit, offset int) (*dtos.Tender, error) {
 	return s.Repo.Tenders.GetList(limit, offset)
 }
 
-func (s *tenderService) ValidateTender(tender *models.Tender) error {
+func (s *tenderService) ValidateTender(tender *dtos.Tender) error {
 	// Ensure the budget is greater than 0
 	if tender.Budget <= 0 {
 		return errors.New("budget must be greater than zero")
