@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/alihaqberdi/goga_go/internal/pkg/app_errors"
 	"strconv"
 
 	"github.com/alihaqberdi/goga_go/internal/dtos"
@@ -15,7 +16,8 @@ type Tender struct {
 
 func (h *Tender) CreateTender(c *gin.Context) {
 	data, err := bind[dtos.Tender](c)
-	if HasErr(c, err) {
+	if err != nil {
+		FailErr(c, app_errors.TenderInvalidInput)
 		return
 	}
 
