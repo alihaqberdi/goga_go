@@ -16,6 +16,6 @@ func New(serv *service.Service, _cache *caching.Cache, mw *mw.Middleware) *Handl
 	return &Handlers{
 		&Tenders{serv, mw},
 		&Auth{serv},
-		&Bids{serv},
+		&Bids{serv, mw},
 	}
 }

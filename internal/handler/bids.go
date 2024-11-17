@@ -1,17 +1,19 @@
 package handler
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/alihaqberdi/goga_go/internal/dtos"
+	"github.com/alihaqberdi/goga_go/internal/handler/mw"
 	. "github.com/alihaqberdi/goga_go/internal/handler/response"
+	"github.com/alihaqberdi/goga_go/internal/pkg/app_errors"
 	"github.com/alihaqberdi/goga_go/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
 type Bids struct {
 	Service *service.Service
+	MW      *mw.Middleware
 }
 
 // CreateBid godoc
@@ -25,7 +27,13 @@ type Bids struct {
 // @Success 200 {object} dtos.BidList
 // @Router /api/contractor/tenders/{tender_id}/bid [post]
 func (h *Bids) Create(c *gin.Context) {
+	user, ok := h.MW.GetUser(c)
+	if !ok {
+		FailErr(c, app_errors.InternalServerError)
+		return
+	}
 	data, err := bind[dtos.BidCreate](c)
+	data.ContractorID = user.Id
 	if HasErr(c, err) {
 		return
 	}
@@ -118,9 +126,13 @@ func (h *Bids) Delete(c *gin.Context) {
 // @Success 200 {object} dtos.BidList
 // @Router /users/{id}/bids [get]
 func (h *Bids) UserBids(c *gin.Context) {
-	fmt.Println(c)
-	userID := 1
-	res, err := h.Service.Bids.UserBids(uint(userID))
+	user, ok := h.MW.GetUser(c)
+	if !ok {
+		FailErr(c, app_errors.InternalServerError)
+		return
+	}
+	userId := user.Id
+	res, err := h.Service.Bids.UserBids(uint(userId))
 	if HasErr(c, err) {
 		return
 	}
