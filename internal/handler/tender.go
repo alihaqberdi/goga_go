@@ -62,3 +62,27 @@ func (h *Tender) GetListTenders(c *gin.Context) {
 
 	Success(c, res, 201)
 }
+
+func (h *Tender) GetListTendersByUser(c *gin.Context) {
+	userID, err := strconv.Atoi(c.Query("user_id"))
+	if HasErr(c, err) {
+		return
+	}
+
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	if HasErr(c, err) {
+		return
+	}
+
+	offset, err := strconv.Atoi(c.DefaultQuery("offset", "0"))
+	if HasErr(c, err) {
+		return
+	}
+
+	res, err := h.Service.Tenders.GetListTendersByUser(userID, limit, offset)
+	if HasErr(c, err) {
+		return
+	}
+
+	Success(c, res, 200)
+}

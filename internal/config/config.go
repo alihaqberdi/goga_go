@@ -2,18 +2,19 @@ package config
 
 import (
 	"fmt"
-	"github.com/go-shafaq/timep"
-	"github.com/joho/godotenv"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/go-shafaq/timep"
+	"github.com/joho/godotenv"
 )
 
 var (
 	PORT = "8080"
 
 	//	Databases
-	POSTGRES_URI         = "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
+	POSTGRES_URI         = "postgres://postgres:voidpostgres@localhost:5432/postgres?sslmode=disable"
 	POSTGRES_DROP_TABELS = true
 
 	// Chaching

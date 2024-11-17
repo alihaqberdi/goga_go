@@ -41,3 +41,12 @@ func (r *Tenders) Update(tender *models.Tender) error {
 func (r *Tenders) Delete(id uint) error {
 	return r.db.Delete(&models.Tender{}, id).Error
 }
+
+func (r *Tenders) GetListByUser(userID int, limit, offset int) ([]models.Tender, error) {
+	var tenders []models.Tender
+	err := r.db.Where("user_id = ?", userID).Limit(limit).Offset(offset).Find(&tenders).Error
+	if err != nil {
+		return nil, err
+	}
+	return tenders, nil
+}
