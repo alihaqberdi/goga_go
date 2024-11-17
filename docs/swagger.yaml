@@ -7,6 +7,28 @@ definitions:
       user:
         $ref: '#/definitions/dtos.User'
     type: object
+  dtos.BidCreate:
+    properties:
+      comments:
+        example: This is a comment
+        type: string
+      contractor_id:
+        example: 1
+        type: integer
+      delivery_time:
+        example: "12"
+        type: string
+      price:
+        example: 100
+        type: number
+      status:
+        allOf:
+        - $ref: '#/definitions/types.BidStatus'
+        example: pending
+      tender_id:
+        example: 1
+        type: integer
+    type: object
   dtos.BidList:
     properties:
       comments:
@@ -20,28 +42,6 @@ definitions:
         type: string
       id:
         type: integer
-      price:
-        example: 100
-        type: number
-      status:
-        allOf:
-        - $ref: '#/definitions/types.BidStatus'
-        example: pending
-      tender_id:
-        example: 1
-        type: integer
-    type: object
-  dtos.BidsCreate:
-    properties:
-      comments:
-        example: This is a comment
-        type: string
-      contractor_id:
-        example: 1
-        type: integer
-      delivery_time:
-        example: "12"
-        type: string
       price:
         example: 100
         type: number
@@ -105,7 +105,31 @@ info:
   title: Go API Example
   version: "1.0"
 paths:
-  /api/v1/bids/{tender_id}:
+  /api/client/tenders/{tender_id}/award/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Award a bid
+      parameters:
+      - description: Tender ID
+        in: path
+        name: tender_id
+        required: true
+        type: integer
+      - description: Bid ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Award a bid
+      tags:
+      - Bids
+  /api/client/tenders/{tender_id}/bids:
     get:
       consumes:
       - application/json
@@ -126,6 +150,7 @@ paths:
       summary: Get list of bids
       tags:
       - Bids
+  /api/contractor/tenders/{tender_id}/bid:
     post:
       consumes:
       - application/json
@@ -141,7 +166,7 @@ paths:
         name: bid
         required: true
         schema:
-          $ref: '#/definitions/dtos.BidsCreate'
+          $ref: '#/definitions/dtos.BidCreate'
       produces:
       - application/json
       responses:

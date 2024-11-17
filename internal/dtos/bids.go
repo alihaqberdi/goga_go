@@ -23,3 +23,6 @@ type BidList struct {
 	BidsBase
 	ID uint `json:"id"`
 }
+type BidAward struct {
+	ID uint `json:"id"`
+}
