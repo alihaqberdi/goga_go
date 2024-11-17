@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 
+	"github.com/alihaqberdi/goga_go/internal/dtos"
 	"github.com/alihaqberdi/goga_go/internal/models"
 	"github.com/alihaqberdi/goga_go/internal/models/types"
 	"github.com/alihaqberdi/goga_go/internal/repo"
@@ -14,21 +15,32 @@ type bidsService struct {
 	Cache *caching.Cache
 }
 
-func (s *bidsService) CreateBid(bid *models.Bid) error {
+func (s *bidsService) CreateBid(bid *dtos.BidsCreate) (*models.Bid, error) {
 	err := s.ValidateBid(bid)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return s.Repo.Bids.Create(bid)
+	return s.Repo.Bids.Create(&models.Bid{
+		TenderId:     bid.TenderID,
+		Price:        bid.Price,
+		Status:       bid.Status,
+		ContractorId: bid.ContractorID,
+		DeliveryTime: bid.DeliveryTime,
+		Comments:     bid.Comments,
+	})
+
 }
-func (s *bidsService) ValidateBid(bid *models.Bid) error {
+func (s *bidsService) GetList(tenderID uint) ([]models.Bid, error) {
+	return s.Repo.Bids.GetList(tenderID)
+}
+func (s *bidsService) ValidateBid(bid *dtos.BidsCreate) error {
 	if bid.Price <= 0 {
 		return errors.New("amount must be greater than zero")
 	}
 	if bid.Status != types.BidStatusPending {
 		return errors.New("invalid status, must be 'pending'")
 	}
-	tender, err := s.Repo.Tenders.GetByID(bid.TenderId)
+	tender, err := s.Repo.Tenders.GetByID(bid.TenderID)
 	if err != nil {
 		return err
 	}
