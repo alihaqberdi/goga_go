@@ -81,6 +81,12 @@ func main() {
 			auth.POST("/register", h.Register)
 			auth.POST("/login", h.Login)
 		}
+		bids := v1.Group("/bids")
+		{
+			h := handlers.Bids
+			bids.POST("/", h.CreateBid)
+			bids.GET("/:tender_id", h.GetList)
+		}
 
 	}
 

@@ -10,12 +10,12 @@ type Bids struct {
 	DB *gorm.DB
 }
 
-func (r *Bids) Create(bid *models.Bid) error {
+func (r *Bids) Create(bid *models.Bid) (*models.Bid, error) {
 	if err := r.DB.Create(bid).Error; err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return bid, nil
 }
 
 func (r *Bids) GetList(tenderId uint) ([]models.Bid, error) {
