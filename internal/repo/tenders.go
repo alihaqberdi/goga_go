@@ -9,11 +9,11 @@ type Tenders struct {
 	db *gorm.DB
 }
 
-func (r *Tenders) Create(tender *models.Tender) (uint, error) {
+func (r *Tenders) Create(tender *models.Tender) (models.Tender, error) {
 	if err := r.db.Create(tender).Error; err != nil {
-		return 0, err
+		return models.Tender{}, err
 	}
-	return tender.ID, nil
+	return *tender, nil
 }
 
 func (r *Tenders) GetByID(id uint) (*models.Tender, error) {

@@ -9,7 +9,7 @@ import (
 
 type Tender struct {
 	gorm.Model
-	ClientId    int                `gorm:"not null"`
+	ClientId    uint               `gorm:"not null"`
 	Title       string             `gorm:"type:varchar(255);not null"`
 	Description string             `gorm:"type:text"`
 	Deadline    time.Time          `gorm:"not null"`
