@@ -80,14 +80,14 @@ func (s *bidsService) GetList(tenderID uint) ([]models.Bid, error) {
 
 func (s *bidsService) ValidateBid(bid *dtos.BidCreate) error {
 	if bid.Price <= 0 {
-		return errors.New("amount must be greater than zero")
+		return app_errors.BidInvalidData
 	}
 	if bid.Status != types.BidStatusPending {
 		return errors.New("invalid status, must be 'pending'")
 	}
 	tender, err := s.Repo.Tenders.GetByID(bid.TenderID)
 	if err != nil {
-		return err
+		return app_errors.TenderNotFound
 	}
 	if tender.Status != types.TenderStatusOpen {
 		return errors.New("tender is not open")
