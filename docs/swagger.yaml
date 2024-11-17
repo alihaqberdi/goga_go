@@ -1,0 +1,199 @@
+basePath: /api/v1
+definitions:
+  dtos.AuthRes:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/dtos.User'
+    type: object
+  dtos.BidList:
+    properties:
+      comments:
+        example: This is a comment
+        type: string
+      contractor_id:
+        example: 1
+        type: integer
+      delivery_time:
+        example: "12"
+        type: string
+      id:
+        type: integer
+      price:
+        example: 100
+        type: number
+      status:
+        allOf:
+        - $ref: '#/definitions/types.BidStatus'
+        example: pending
+      tender_id:
+        example: 1
+        type: integer
+    type: object
+  dtos.BidsCreate:
+    properties:
+      comments:
+        example: This is a comment
+        type: string
+      contractor_id:
+        example: 1
+        type: integer
+      delivery_time:
+        example: "12"
+        type: string
+      price:
+        example: 100
+        type: number
+      status:
+        allOf:
+        - $ref: '#/definitions/types.BidStatus'
+        example: pending
+      tender_id:
+        example: 1
+        type: integer
+    type: object
+  dtos.Login:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  dtos.Register:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      role:
+        $ref: '#/definitions/types.UserRole'
+      username:
+        type: string
+    type: object
+  dtos.User:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      role:
+        $ref: '#/definitions/types.UserRole'
+      username:
+        type: string
+    type: object
+  types.BidStatus:
+    enum:
+    - pending
+    - awarded
+    type: string
+    x-enum-varnames:
+    - BidStatusPending
+    - BidStatusAwarded
+  types.UserRole:
+    enum:
+    - client
+    - contractor
+    type: string
+    x-enum-varnames:
+    - UserRoleClient
+    - UserRoleContractor
+host: localhost:8080
+info:
+  contact: {}
+  description: API documentation for the Go application
+  title: Go API Example
+  version: "1.0"
+paths:
+  /api/v1/bids/{tender_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get list of bids
+      parameters:
+      - description: Tender ID
+        in: path
+        name: tender_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.BidList'
+      summary: Get list of bids
+      tags:
+      - Bids
+    post:
+      consumes:
+      - application/json
+      description: Create a new bid
+      parameters:
+      - description: Tender ID
+        in: path
+        name: tender_id
+        required: true
+        type: integer
+      - description: Bid object
+        in: body
+        name: bid
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.BidsCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.BidList'
+      summary: Create a new bid
+      tags:
+      - Bids
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login
+      parameters:
+      - description: Login
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.AuthRes'
+      summary: Login
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user
+      parameters:
+      - description: Register
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.Register'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dtos.AuthRes'
+      summary: Register a new user
+      tags:
+      - auth
+swagger: "2.0"

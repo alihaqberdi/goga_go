@@ -13,18 +13,27 @@ var (
 	PORT = "8080"
 
 	//	Databases
-	POSTGRES_URI = "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
+	POSTGRES_URI         = "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
+	POSTGRES_DROP_TABELS = true
 
 	// Chaching
 	CACHING_EXPIRATION_DURATION = 16 * 24 * time.Hour
+
+	// JWT
+	JWT_SIGNING_KEY     = "github.com/alihaqberdi/goga_go"
+	JWT_EXPIRY_DURATION = 10 * 24 * time.Hour
 )
 
 func LoadVarsFromEnv() {
 	setIfExistsStr(&PORT, "PORT")
 
 	setIfExistsStr(&POSTGRES_URI, "POSTGRES_URI")
+	setIfExistsBool(&POSTGRES_DROP_TABELS, "POSTGRES_DROP_TABELS")
 
 	setIfExistsDur(&CACHING_EXPIRATION_DURATION, "CACHING_EXPIRATION_DURATION")
+
+	setIfExistsStr(&JWT_SIGNING_KEY, "JWT_SIGNING_KEY")
+	setIfExistsDur(&JWT_EXPIRY_DURATION, "JWT_EXPIRY_DURATION")
 
 }
 
