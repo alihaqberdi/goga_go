@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/alihaqberdi/goga_go/internal/handler/mw"
 	"log"
 	"math/rand/v2"
 	"net/http"
@@ -45,7 +46,8 @@ func main() {
 	repos := repo.New(db)
 	cache := caching.New()
 	services := service.New(repos, cache, jwtManager)
-	handlers := handler.New(services, cache, jwtManager)
+	mw := mw.New(services, cache, jwtManager)
+	handlers := handler.New(services, cache, mw)
 
 	r := gin.Default()
 
@@ -61,8 +63,8 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	mwClient := handlers.MW.AuthByRoles(types.UserRoleClient)
-	mwContractor := handlers.MW.AuthByRoles(types.UserRoleContractor)
+	mwClient := mw.AuthByRoles(types.UserRoleClient)
+	mwContractor := mw.AuthByRoles(types.UserRoleContractor)
 	_, _ = mwContractor, mwClient
 	// api
 	{
@@ -80,7 +82,7 @@ func main() {
 			r.POST("/register", h.Register)
 			r.POST("/login", h.Login)
 		}
-		client := r.Group("/api/client")
+		client := r.Group("/api/client", mwClient)
 		{
 			h := handlers.Tender
 
