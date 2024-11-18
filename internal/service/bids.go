@@ -48,11 +48,12 @@ func (s *Bids) Create(bid *dtos.BidCreate) (*dtos.BidList, error) {
 	}, nil
 }
 
-func (s *Bids) Delete(id uint) error {
-	_, err := s.Repo.Bids.GetByID(id)
-	if err != nil {
+func (s *Bids) Delete(id uint, contractorId uint) error {
+	bid, err := s.Repo.Bids.GetByID(id)
+	if err != nil || bid.ContractorId != contractorId {
 		return app_errors.BidNotFoundOrAccessDenied
 	}
+
 	return s.Repo.Bids.Delete(id)
 }
 
@@ -60,10 +61,10 @@ func (s *Bids) UserBids(userID uint) ([]models.Bid, error) {
 	return s.Repo.Bids.UserBids(userID)
 }
 
-func (s *Bids) AwardBid(tenderID, id uint) error {
+func (s *Bids) AwardBid(tenderID, id, clientID uint) error {
 	tender, err := s.Repo.Tenders.GetByID(tenderID)
 	_ = tender
-	if err != nil {
+	if err != nil || tender.ClientId != clientID {
 		return app_errors.TenderNotFoundOrAccessDenied
 	}
 
